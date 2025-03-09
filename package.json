@@ -73,36 +73,6 @@
       ]
     },
     {
-      "name": "ask-selected-image",
-      "title": "Ask Selected Image",
-      "description": "Template with a plain detail view",
-      "mode": "view",
-      "icon": "vision.png",
-      "arguments": [
-        {
-          "name": "query",
-          "type": "text",
-          "required": false,
-          "placeholder": "What is it?"
-        }
-      ]
-    },
-    {
-      "name": "ask-clipboard-image",
-      "title": "Ask Clipboard Image",
-      "description": "Template with a plain detail view",
-      "mode": "view",
-      "icon": "vision.png",
-      "arguments": [
-        {
-          "name": "query",
-          "type": "text",
-          "required": false,
-          "placeholder": "What is it?"
-        }
-      ]
-    },
-    {
       "name": "create-ai-command",
       "title": "Create AI Command",
       "description": "Create new quick AI command",

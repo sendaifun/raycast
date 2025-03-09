@@ -2,13 +2,13 @@
 <img width=100 src="assets/icon@dark.png">
 </p>
 
-<h1 align="center">ChatGPT</h1>
+<h1 align="center">Solana Agent</h1>
 
 <h3 align="center">
-Interact with OpenAI's ChatGPT right from your command bar
+Interact with the Solana blockchain from Raycast using AI models
 </h3>
 
-![Conversation View](metadata/1.png)
+<!-- ![Conversation View](metadata/1.png)
 
 # Features
 
@@ -44,7 +44,7 @@ Automatically save all the question and answer so you can go back digging for th
 
 ### Use AI commands and create your own
 
-Process text taken from anywhere (selected text, clipboard text, opened web page) and 
+Process text taken from anywhere (selected text, clipboard text, opened web page) and
 insert the result into the frontmost application or copy it to the clipboard.
 
 ![Search AI commands and create a quicklink to the command and use it easily](metadata/8.png)
@@ -94,7 +94,7 @@ All preferences properties list that can be customize through `Raycast Settings 
 ### How to use Azure OpenAI
 
 1. Copy and paste your Azure OpenAI's `KEY` value to the `API key` field
-   
+
 2. Copy and paste your Azure OpenAI `Endpoint` value to the `Azure Endpoint` field. Then, Tick the `Use Azure OpenAI` checkbox
 
 3. Copy and paste your Azure OpenAI `Model deployment name` value to the `Azure Deployment` field
@@ -109,4 +109,4 @@ Donate to support the development of this extension. Thank you!
 
 <p align="right">
 Made with ♥ from Indonesia
-</p>
+</p> -->
