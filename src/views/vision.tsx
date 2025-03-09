@@ -7,6 +7,7 @@ import { AskImageProps, Model } from "../type";
 import { toUnit } from "../utils";
 import { LoadFrom, loadFromClipboard, loadFromFinder } from "../utils/load";
 import { countImageTokens, countToken, estimateImagePrice, estimatePrice } from "../utils/token";
+import type { Preferences } from "../type";
 
 const preferences = getPreferenceValues<Preferences>();
 

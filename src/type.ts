@@ -1,8 +1,35 @@
-import OpenAI from "openai";
+// import type OpenAI from "openai";
+import type AI from "ai";
 
 export type Set<T> = React.Dispatch<React.SetStateAction<T>>;
 
-export type Message = OpenAI.ChatCompletionMessageParam;
+export interface Preferences {
+  apiKey: string;
+  rpcUrl: string;
+  privateKey: string;
+  useStream: boolean;
+  isAutoSaveConversation: boolean;
+  isHistoryPaused: boolean;
+  isAutoLoadText: boolean;
+  isAutoFullInput: boolean;
+  isAutoTTS: boolean;
+  isCustomModel: boolean;
+  useApiEndpoint: boolean;
+  apiEndpoint: string;
+  useVisionModel: boolean;
+  visionModelName: string;
+  useProxy: boolean;
+  proxyProtocol: string;
+  proxyHost: string;
+  proxyPort: string;
+  proxyUsername: string;
+  proxyPassword: string;
+  useAzure: boolean;
+  azureEndpoint: string;
+  azureDeployment: string;
+}
+
+export type Message = AI.Message;
 
 export interface Question {
   id: string;

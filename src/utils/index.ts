@@ -1,9 +1,7 @@
-import { Chat, Message } from "../type";
+import type { Chat, Message, Preferences } from "../type";
 import path from "node:path";
 import * as fs from "node:fs";
-import OpenAI from "openai/index";
-
-type ChatCompletionContentPart = OpenAI.ChatCompletionContentPart;
+import { v4 } from "uuid";
 
 function countOpenAITokens(text: string): number {
   // 100 tokens ~= 75 words
@@ -37,21 +35,22 @@ export function chatTransformer(chat: Chat[], prompt: string): Message[] {
   const messages: Message[] = [];
   if (prompt !== "") {
     // only add system prompt if it's not empty
-    messages.push({ role: "system", content: prompt });
+    messages.push({ role: "system", content: prompt, id: v4() });
   }
   const limitedChat = limitConversationLength(chat);
-  limitedChat.forEach(({ question, answer }) => {
-    messages.push({ role: "user", content: question });
+  for (const { question, answer, id } of limitedChat) {
+    messages.push({ role: "user", content: question, id });
     messages.push({
       role: "assistant",
       content: answer,
+      id,
     });
-  });
+  }
   return messages;
 }
 
 export const getConfigUrl = (params: Preferences) => {
-  if (params.useAzure) return params.azureEndpoint + "/openai/deployments/" + params.azureDeployment;
+  if (params.useAzure) return `${params.azureEndpoint}/openai/deployments/${params.azureDeployment}`;
   if (params.useApiEndpoint) return params.apiEndpoint;
   return "https://api.openai.com/v1";
 };
@@ -82,33 +81,6 @@ export const imgFormat = (file: string) => {
   const replace = file.replace("file://", "").replace("%20", " ");
   // data:image/jpeg;base64,{base64_image}
   return `data:${type};base64,${fs.readFileSync(replace).toString("base64")}`;
-};
-
-export const buildUserMessage = (question: string, files?: string[]) => {
-  if (!files || files.length === 0) {
-    // If there is no file, return the question string directly
-    return question;
-  }
-
-  // If there are files, create an array
-  const content: ChatCompletionContentPart[] = [
-    {
-      type: "text",
-      text: question,
-    },
-  ];
-
-  files.forEach((img) => {
-    content.push({
-      type: "image_url",
-      image_url: {
-        // Format images to base64
-        url: imgFormat(img),
-      },
-    });
-  });
-
-  return content;
 };
 
 export const toUnit = (size: number) => {

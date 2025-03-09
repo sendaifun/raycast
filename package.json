@@ -1,36 +1,13 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "chatgpt",
-  "title": "ChatGPT",
-  "description": "Interact with OpenAI's ChatGPT directly from your command bar",
+  "name": "solana-agent",
+  "title": "Solana Agent",
+  "description": "Interact with the Solana blockchain from Raycast using AI models",
   "icon": "icon.png",
-  "author": "abielzulio",
-  "contributors": [
-    "erodactyl",
-    "pernielsentikaer",
-    "shichongrui",
-    "timolins",
-    "cruelmoney",
-    "sykuang",
-    "thanhlongb",
-    "k8scat",
-    "Nauxscript",
-    "lin",
-    "leeonfield",
-    "husniadil",
-    "luckykong",
-    "smilemachine",
-    "iamEvan",
-    "alex925"
-  ],
-  "pastContributors": [
-    "pomdtr",
-    "Lemon"
-  ],
+  "author": "michael_essiet_emsaa",
+  "contributors": [],
   "categories": [
     "Productivity",
-    "Developer Tools",
-    "Web",
     "Fun",
     "Finance",
     "Other"
@@ -160,8 +137,17 @@
       "label": "Solana wallet private key",
       "description": "Enter the private key of the wallet you would like to use",
       "type": "password",
-      "title": "Solana Private Key",
+      "title": "Solana Wallet Private Key",
       "required": true
+    },
+    {
+      "name": "rpcUrl",
+      "label": "RPC URL",
+      "description": "RPC URL of the provider you'd like to use",
+      "type": "textfield",
+      "title": "Solana RPC URL",
+      "required": true,
+      "default": "https://api.mainnet-beta.solana.com"
     },
     {
       "name": "useStream",
@@ -348,10 +334,12 @@
     }
   ],
   "dependencies": {
+    "@ai-sdk/openai": "^1.2.1",
     "@nem035/gpt-3-encoder": "^1.1.7",
     "@raycast/api": "^1.88.4",
     "@raycast/utils": "^1.18.1",
     "@types/uuid": "^10.0.0",
+    "ai": "^4.1.54",
     "cross-fetch": "^4.1.0",
     "csv-parse": "^5.6.0",
     "image-meta": "^0.2.1",
@@ -361,6 +349,7 @@
     "proxy-agent": "^6.5.0",
     "run-applescript": "^7.0.0",
     "say": "^0.16.0",
+    "solana-agent-kit": "^1.4.8",
     "uuid": "^9.0.0",
     "youtube-transcript": "^1.2.1"
   },
