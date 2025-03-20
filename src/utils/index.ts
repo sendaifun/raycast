@@ -40,11 +40,13 @@ export function chatTransformer(chat: Chat[], prompt: string): Message[] {
   const limitedChat = limitConversationLength(chat);
   for (const { question, answer, id } of limitedChat) {
     messages.push({ role: "user", content: question, id });
-    messages.push({
-      role: "assistant",
-      content: answer,
-      id,
-    });
+    if (answer && answer.length > 0) {
+      messages.push({
+        role: "assistant",
+        content: answer,
+        id,
+      });
+    }
   }
   return messages;
 }

@@ -8,7 +8,11 @@ import { useAutoTTS } from "./useAutoTTS";
 import { useHistory } from "./useHistory";
 import useAgentKit from "./useAgentKit";
 import useAI from "./useAI";
-import { streamText } from "ai";
+import { generateText, streamText } from "ai";
+import fetch from "node-fetch";
+
+// @ts-expect-error - unnecessary type mismatch
+globalThis.fetch = fetch;
 
 export function useChat<T extends Chat>(props: T[]): ChatHook {
   const [data, setData] = useState<Chat[]>(props);
@@ -63,49 +67,16 @@ export function useChat<T extends Chat>(props: T[]): ChatHook {
     const { signal: abortSignal } = abortControllerRef.current;
 
     try {
-      const res = streamText({
+      const res = await generateText({
         model: openai(model.option),
         temperature: Number(model.temperature),
         tools,
-        messages: chatTransformer(data.reverse(), model.prompt),
-        system: "",
+        messages: chatTransformer([...data.reverse(), chat], model.prompt),
         maxSteps: 5,
       });
 
-      if (useStream) {
-        const stream = res.textStream;
-
-        for await (const chunk of stream) {
-          try {
-            const content = chunk;
-
-            if (content) {
-              chat.answer += chunk;
-              setStreamData({ ...chat, answer: chat.answer });
-            }
-          } catch (error) {
-            if (abortSignal.aborted) {
-              toast.title = "Request canceled";
-              toast.message = undefined;
-              setIsAborted(true);
-            } else {
-              const message = `Couldn't stream message: ${error}`;
-              toast.title = "Error";
-              toast.message = message;
-              setErrorMsg(message);
-            }
-            toast.style = Toast.Style.Failure;
-            setLoading(false);
-          }
-        }
-
-        setTimeout(async () => {
-          setStreamData(undefined);
-        }, 5);
-      } else {
-        const completion = await res.text;
-        chat = { ...chat, answer: completion ?? "" };
-      }
+      const completion = res.text;
+      chat = { ...chat, answer: completion ?? "" };
 
       if (isAutoTTS) {
         say.stop();
@@ -134,6 +105,7 @@ export function useChat<T extends Chat>(props: T[]): ChatHook {
         await history.add(chat);
       }
     } catch (err) {
+      console.log(err);
       if (abortSignal.aborted) {
         toast.title = "Request canceled";
         toast.message = undefined;
