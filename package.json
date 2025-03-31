@@ -17,42 +17,42 @@
     {
       "name": "ask",
       "title": "Ask Question",
-      "subtitle": "ChatGPT",
-      "description": "Ask ChatGPT via Raycast",
+      "subtitle": "Solana Agent",
+      "description": "Ask Solana Agent via Raycast",
       "mode": "view"
     },
     {
       "name": "saved",
       "title": "Saved Answers",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your saved answer",
       "mode": "view"
     },
     {
       "name": "history",
       "title": "History",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your recent answer",
       "mode": "view"
     },
     {
       "name": "conversation",
       "title": "Conversations",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your recent conversation",
       "mode": "view"
     },
     {
       "name": "model",
       "title": "Models",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your custom and default model",
       "mode": "view"
     },
     {
       "name": "summarize",
       "title": "Summarize Website",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Summarize Website and YouTube video",
       "mode": "view",
       "preferences": [
@@ -332,7 +332,7 @@
     "@raycast/eslint-config": "^2.0.4",
     "@types/node": "20.8.10",
     "@types/plist": "^3.0.5",
-    "@types/react": "18.3.3",
+    "@types/react": "^19.0.10",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
     "typescript": "^5.8.2"
