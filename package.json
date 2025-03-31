@@ -324,8 +324,8 @@
     "@types/node": "20.8.10",
     "@types/plist": "^3.0.5",
     "@types/react": "^19.0.10",
-    "eslint": "^8.57.0",
-    "prettier": "^3.3.3",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.2"
   },
   "scripts": {

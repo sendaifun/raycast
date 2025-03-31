@@ -8,7 +8,7 @@ import { useAutoTTS } from "./useAutoTTS";
 import { useHistory } from "./useHistory";
 import useAgentKit from "./useAgentKit";
 import useAI from "./useAI";
-import { generateText, streamText } from "ai";
+import { generateText } from "ai";
 import fetch from "node-fetch";
 
 // @ts-expect-error - unnecessary type mismatch
@@ -20,7 +20,7 @@ export function useChat<T extends Chat>(props: T[]): ChatHook {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [isAborted, setIsAborted] = useState<boolean>(false);
-  const [streamData, setStreamData] = useState<Chat | undefined>();
+  const [streamData] = useState<Chat | undefined>();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const [isHistoryPaused] = useState<boolean>(() => {
