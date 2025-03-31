@@ -306,9 +306,9 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.2.1",
     "@nem035/gpt-3-encoder": "^1.1.7",
-    "@raycast/api": "^1.88.4",
-    "@raycast/utils": "^1.18.1",
-    "@solana-agent-kit/plugin-token": "^2.0.0-beta.2",
+    "@raycast/api": "^1.94.2",
+    "@raycast/utils": "^1.17.0",
+    "@solana-agent-kit/plugin-token": "^2.0.0-beta.8",
     "@solana/web3.js": "^1.98.0",
     "@types/uuid": "^10.0.0",
     "ai": "^4.1.54",
@@ -321,20 +321,21 @@
     "openai": "^4.77.0",
     "plist": "^3.1.0",
     "proxy-agent": "^6.5.0",
+    "rpc-websockets": "^7.11.0",
     "run-applescript": "^7.0.0",
     "say": "^0.16.0",
-    "solana-agent-kit": "^2.0.0-beta.3",
+    "solana-agent-kit": "^2.0.0-beta.8",
     "uuid": "^9.0.0",
     "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
-    "@raycast/eslint-config": "^1.0.11",
+    "@raycast/eslint-config": "^2.0.4",
     "@types/node": "20.8.10",
     "@types/plist": "^3.0.5",
     "@types/react": "18.3.3",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.2"
   },
   "scripts": {
     "build": "ray build -e dist",

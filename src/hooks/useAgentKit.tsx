@@ -14,7 +14,6 @@ export default function useAgentKit() {
     const wallet = new KeypairWallet(keypair, preferences.rpcUrl);
     return new SolanaAgentKit(wallet, preferences.rpcUrl, {
       OPENAI_API_KEY: preferences.apiKey,
-      //@ts-expect-error - unnecessary type mismatch
     }).use(TokenPlugin);
   }, [preferences.apiKey, preferences.privateKey, preferences.rpcUrl]);
 
