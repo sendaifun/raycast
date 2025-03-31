@@ -7,7 +7,6 @@ export interface Preferences {
   apiKey: string;
   rpcUrl: string;
   privateKey: string;
-  useStream: boolean;
   isAutoSaveConversation: boolean;
   isHistoryPaused: boolean;
   isAutoLoadText: boolean;

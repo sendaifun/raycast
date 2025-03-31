@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "solana-agent",
   "title": "Solana Agent",
-  "description": "Interact with the Solana blockchain from Raycast using AI models",
+  "description": "Interact with the Solana blockchain from Raycast using AI",
   "icon": "icon.png",
   "author": "michael_essiet_emsaa",
   "contributors": [],
@@ -118,15 +118,6 @@
       "title": "Solana RPC URL",
       "required": true,
       "default": "https://api.mainnet-beta.solana.com"
-    },
-    {
-      "name": "useStream",
-      "label": "Enable streaming completions",
-      "description": "Stream the completions of the generated answer",
-      "type": "checkbox",
-      "title": "Stream Completion",
-      "default": true,
-      "required": true
     },
     {
       "name": "isAutoSaveConversation",

@@ -20,11 +20,6 @@ export function useChat<T extends Chat>(props: T[]): ChatHook {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [isAborted, setIsAborted] = useState<boolean>(false);
-  const [useStream] = useState<boolean>(() => {
-    return getPreferenceValues<{
-      useStream: boolean;
-    }>().useStream;
-  });
   const [streamData, setStreamData] = useState<Chat | undefined>();
   const abortControllerRef = useRef<AbortController | null>(null);
 
