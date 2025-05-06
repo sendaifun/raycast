@@ -15,6 +15,13 @@
   "license": "MIT",
   "commands": [
     {
+      "name": "auth",
+      "title": "Authenticate",
+      "subtitle": "Solana Agent",
+      "description": "Authenticate the Solana Agent",
+      "mode": "view"
+    },
+    {
       "name": "ask",
       "title": "Ask Question",
       "subtitle": "Solana Agent",
@@ -299,7 +306,7 @@
     "@nem035/gpt-3-encoder": "^1.1.7",
     "@raycast/api": "^1.94.2",
     "@raycast/utils": "^1.17.0",
-    "@solana-agent-kit/plugin-token": "^2.0.0-beta.8",
+    "@solana-agent-kit/plugin-token": "^2.0.2",
     "@solana/web3.js": "^1.98.0",
     "@types/uuid": "^10.0.0",
     "ai": "^4.1.54",
@@ -315,7 +322,7 @@
     "rpc-websockets": "^7.11.0",
     "run-applescript": "^7.0.0",
     "say": "^0.16.0",
-    "solana-agent-kit": "^2.0.0-beta.8",
+    "solana-agent-kit": "^2.0.2",
     "uuid": "^9.0.0",
     "youtube-transcript": "^1.2.1"
   },
