@@ -5,7 +5,6 @@ import { Connection, PublicKey, Transaction, VersionedTransaction } from "@solan
 import TokenPlugin from "@solana-agent-kit/plugin-token";
 import { backendClient, STORAGE_KEYS } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
-import { writeFileSync } from "node:fs";
 
 function hexToTransaction(hex: string) {
   try {
@@ -20,7 +19,7 @@ async function signPayload(payloadHex: string, type: "signTransaction" | "signPa
     "/transactions/initiate-sign",
     {
       operation: type,
-      payload: Buffer.from(payloadHex).toString("hex"),
+      payload: payloadHex,
       encoding: "hex",
     },
     {
@@ -82,7 +81,6 @@ export default function useAgentKit() {
         },
         signAndSendTransaction: async (tx) => {
           try {
-            console.log(tx);
             const connection = new Connection(preferences.rpcUrl);
             const signedTx = await signPayload(
               Buffer.from(tx.serialize({ requireAllSignatures: false })).toString("hex"),
