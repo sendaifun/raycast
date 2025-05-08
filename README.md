@@ -12,7 +12,7 @@ Interact with the Solana blockchain from Raycast using AI models
 
 # Features
 
-### Ask anything, from your favourite thing
+### Ask anything
 
 Interact with your Solana wallet straight from Raycast. Ask anything about your wallet, balance, carry out swaps, transfers, and more.
 
@@ -60,6 +60,7 @@ All preferences properties list that can be customize through `Raycast Settings 
 | Properties               | Label                  | Value                               | Required | Default                     | Description                                                                                                      |
 | ------------------------ | ---------------------- | ----------------------------------- | -------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `apiKey`                 | API Key                | `string`                            | `true`   | `empty`                     | Your personal OpenAI API key                                                                                     |
+| `rpcUrl`                | RPC URL                | `string`                            | `true`   | `empty`                     | Your Solana RPC URL                                                                                              |
 | `isAutoSaveConversation` | Auto-save Conversation | `boolean`                           | `true`   | `true`                      | Auto-save every conversation that you had with the model                                                         |
 | `isHistoryPaused`        | Pause History          | `boolean`                           | `false`  | `false`                     | Pause the history of the conversation                                                                            |
 | `isAutoLoadText`         | Auto-load              | `boolean`                           | `false`  | `false`                     | Load selected text from your frontmost application to the `question bar` or `full text input form` automatically |

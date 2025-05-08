@@ -6,8 +6,10 @@ import { PreferencesActionSection } from "./actions/preferences";
 import { SaveActionSection } from "./actions/save";
 import { useHistory } from "./hooks/useHistory";
 import { useSavedChat } from "./hooks/useSavedChat";
-import { Chat } from "./type";
+import type { Chat } from "./type";
 import { AnswerDetailView } from "./views/answer-detail";
+import { AuthActionSection } from "./actions/auth";
+import AuthProvider from "./components/AuthProvider";
 
 export default function History() {
   const savedChat = useSavedChat();
@@ -18,6 +20,7 @@ export default function History() {
   const getActionPanel = (chat: Chat) => (
     <ActionPanel>
       <CopyActionSection answer={chat.answer} question={chat.question} />
+      <AuthActionSection />
       <SaveActionSection onSaveAnswerAction={() => savedChat.add(chat)} />
       <ActionPanel.Section title="Output">
         <TextToSpeechAction content={chat.answer} />
@@ -60,41 +63,43 @@ export default function History() {
     });
 
   return (
-    <List
-      isShowingDetail={filteredHistory.length === 0 ? false : true}
-      isLoading={history.isLoading}
-      filtering={false}
-      throttle={false}
-      selectedItemId={selectedAnswerId || undefined}
-      onSelectionChange={(id) => {
-        if (id !== selectedAnswerId) {
-          setSelectedAnswerId(id);
-        }
-      }}
-      searchBarPlaceholder="Search answer/question..."
-      searchText={searchText}
-      onSearchTextChange={setSearchText}
-    >
-      {history.data.length === 0 ? (
-        <List.EmptyView
-          title="No history"
-          description="Your recent questions will be showed up here"
-          icon={Icon.Stars}
-        />
-      ) : (
-        <List.Section title="Recent" subtitle={filteredHistory.length.toLocaleString()}>
-          {filteredHistory.map((answer) => (
-            <List.Item
-              id={answer.id}
-              key={answer.id}
-              title={answer.question}
-              accessories={[{ text: new Date(answer.created_at ?? 0).toLocaleDateString() }]}
-              detail={<AnswerDetailView chat={answer} />}
-              actions={answer && selectedAnswerId === answer.id ? getActionPanel(answer) : undefined}
-            />
-          ))}
-        </List.Section>
-      )}
-    </List>
+    <AuthProvider>
+      <List
+        isShowingDetail={filteredHistory.length === 0}
+        isLoading={history.isLoading}
+        filtering={false}
+        throttle={false}
+        selectedItemId={selectedAnswerId || undefined}
+        onSelectionChange={(id) => {
+          if (id !== selectedAnswerId) {
+            setSelectedAnswerId(id);
+          }
+        }}
+        searchBarPlaceholder="Search answer/question..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+      >
+        {history.data.length === 0 ? (
+          <List.EmptyView
+            title="No history"
+            description="Your recent questions will be showed up here"
+            icon={Icon.Stars}
+          />
+        ) : (
+          <List.Section title="Recent" subtitle={filteredHistory.length.toLocaleString()}>
+            {filteredHistory.map((answer) => (
+              <List.Item
+                id={answer.id}
+                key={answer.id}
+                title={answer.question}
+                accessories={[{ text: new Date(answer.created_at ?? 0).toLocaleDateString() }]}
+                detail={<AnswerDetailView chat={answer} />}
+                actions={answer && selectedAnswerId === answer.id ? getActionPanel(answer) : undefined}
+              />
+            ))}
+          </List.Section>
+        )}
+      </List>
+    </AuthProvider>
   );
 }

@@ -14,6 +14,8 @@ import type { Chat, Conversation, Model } from "./type";
 import { ChatView } from "./views/chat";
 import { ModelDropdown } from "./views/model/dropdown";
 import { QuestionForm } from "./views/question/form";
+import { AuthActionSection } from "./actions/auth";
+import AuthProvider from "./components/AuthProvider";
 
 export default function Ask(props: { conversation?: Conversation; initialQuestion?: string }) {
   const conversations = useConversations();
@@ -139,6 +141,7 @@ export default function Ask(props: { conversation?: Conversation; initialQuestio
   const getActionPanel = (question: string, model: Model) => (
     <ActionPanel>
       <PrimaryAction title="Get Answer" onAction={() => chats.ask(question, [], model)} />
+      <AuthActionSection />
       <FormInputActionSection
         initialQuestion={question}
         onSubmit={(question, files) => chats.ask(question, files, model)}
@@ -151,53 +154,56 @@ export default function Ask(props: { conversation?: Conversation; initialQuestio
   );
 
   return (
-    <List
-      searchText={question.data}
-      isShowingDetail={chats.data.length > 0}
-      filtering={false}
-      isLoading={isLoading || question.isLoading || chats.isLoading || models.isLoading}
-      onSearchTextChange={question.update}
-      throttle={false}
-      navigationTitle={"Ask"}
-      actions={
-        !question.data ? (
-          <ActionPanel>
-            <FormInputActionSection
-              initialQuestion={question.data}
-              onSubmit={(question, files) => chats.ask(question, files, conversation.model)}
-              models={Object.values(models.data)}
-              selectedModel={selectedModelId}
-              onModelChange={setSelectedModelId}
-            />
-            <PreferencesActionSection />
-          </ActionPanel>
-        ) : (
-          getActionPanel(question.data, conversation.model)
-        )
-      }
-      selectedItemId={chats.selectedChatId || undefined}
-      searchBarAccessory={
-        <ModelDropdown
+    <AuthProvider>
+      <List
+        searchText={question.data}
+        isShowingDetail={chats.data.length > 0}
+        filtering={false}
+        isLoading={isLoading || question.isLoading || chats.isLoading || models.isLoading}
+        onSearchTextChange={question.update}
+        throttle={false}
+        navigationTitle={"Ask"}
+        actions={
+          !question.data ? (
+            <ActionPanel>
+              <FormInputActionSection
+                initialQuestion={question.data}
+                onSubmit={(question, files) => chats.ask(question, files, conversation.model)}
+                models={Object.values(models.data)}
+                selectedModel={selectedModelId}
+                onModelChange={setSelectedModelId}
+              />
+              <AuthActionSection />
+              <PreferencesActionSection />
+            </ActionPanel>
+          ) : (
+            getActionPanel(question.data, conversation.model)
+          )
+        }
+        selectedItemId={chats.selectedChatId || undefined}
+        searchBarAccessory={
+          <ModelDropdown
+            models={Object.values(models.data)}
+            onModelChange={setSelectedModelId}
+            selectedModel={selectedModelId}
+          />
+        }
+        // https://github.com/raycast/extensions/issues/10844
+        // `onSelectionChange` may cause race condition
+        searchBarPlaceholder={chats.data.length > 0 ? "Ask another question..." : "Ask a question..."}
+      >
+        <ChatView
+          data={chats.data}
+          question={question.data}
+          isAutoSaveConversation={isAutoSaveConversation}
+          setConversation={setConversation}
+          use={{ chats, conversations, savedChats }}
+          conversation={conversation}
           models={Object.values(models.data)}
-          onModelChange={setSelectedModelId}
           selectedModel={selectedModelId}
+          onModelChange={setSelectedModelId}
         />
-      }
-      // https://github.com/raycast/extensions/issues/10844
-      // `onSelectionChange` may cause race condition
-      searchBarPlaceholder={chats.data.length > 0 ? "Ask another question..." : "Ask a question..."}
-    >
-      <ChatView
-        data={chats.data}
-        question={question.data}
-        isAutoSaveConversation={isAutoSaveConversation}
-        setConversation={setConversation}
-        use={{ chats, conversations, savedChats }}
-        conversation={conversation}
-        models={Object.values(models.data)}
-        selectedModel={selectedModelId}
-        onModelChange={setSelectedModelId}
-      />
-    </List>
+      </List>
+    </AuthProvider>
   );
 }

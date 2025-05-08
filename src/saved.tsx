@@ -4,8 +4,10 @@ import { DestructiveAction, TextToSpeechAction } from "./actions";
 import { CopyActionSection } from "./actions/copy";
 import { PreferencesActionSection } from "./actions/preferences";
 import { useSavedChat } from "./hooks/useSavedChat";
-import { Chat } from "./type";
+import type { Chat } from "./type";
 import { AnswerDetailView } from "./views/answer-detail";
+import { AuthActionSection } from "./actions/auth";
+import AuthProvider from "./components/AuthProvider";
 
 export default function Saved() {
   const savedChat = useSavedChat();
@@ -15,6 +17,7 @@ export default function Saved() {
   const getActionPanel = (chat: Chat) => (
     <ActionPanel>
       <CopyActionSection answer={chat.answer} question={chat.question} />
+      <AuthActionSection />
       <ActionPanel.Section title="Output">
         <TextToSpeechAction content={chat.answer} />
       </ActionPanel.Section>
@@ -56,41 +59,43 @@ export default function Saved() {
     });
 
   return (
-    <List
-      isShowingDetail={filteredSavedChats.length === 0 ? false : true}
-      isLoading={savedChat.isLoading}
-      filtering={false}
-      throttle={false}
-      selectedItemId={selectedAnswerId || undefined}
-      onSelectionChange={(id) => {
-        if (id !== selectedAnswerId) {
-          setSelectedAnswerId(id);
-        }
-      }}
-      searchBarPlaceholder="Search saved answer/question..."
-      searchText={searchText}
-      onSearchTextChange={setSearchText}
-    >
-      {savedChat.data.length === 0 ? (
-        <List.EmptyView
-          title="No saved answers"
-          description="Save generated question with ⌘ + S shortcut"
-          icon={Icon.Stars}
-        />
-      ) : (
-        <List.Section title="Saved" subtitle={filteredSavedChats.length.toLocaleString()}>
-          {filteredSavedChats.map((chat) => (
-            <List.Item
-              id={chat.id}
-              key={chat.id}
-              title={chat.question}
-              accessories={[{ text: new Date(chat.created_at ?? 0).toLocaleDateString() }]}
-              detail={<AnswerDetailView chat={chat} />}
-              actions={chat && selectedAnswerId === chat.id ? getActionPanel(chat) : undefined}
-            />
-          ))}
-        </List.Section>
-      )}
-    </List>
+    <AuthProvider>
+      <List
+        isShowingDetail={filteredSavedChats.length === 0}
+        isLoading={savedChat.isLoading}
+        filtering={false}
+        throttle={false}
+        selectedItemId={selectedAnswerId || undefined}
+        onSelectionChange={(id) => {
+          if (id !== selectedAnswerId) {
+            setSelectedAnswerId(id);
+          }
+        }}
+        searchBarPlaceholder="Search saved answer/question..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+      >
+        {savedChat.data.length === 0 ? (
+          <List.EmptyView
+            title="No saved answers"
+            description="Save generated question with ⌘ + S shortcut"
+            icon={Icon.Stars}
+          />
+        ) : (
+          <List.Section title="Saved" subtitle={filteredSavedChats.length.toLocaleString()}>
+            {filteredSavedChats.map((chat) => (
+              <List.Item
+                id={chat.id}
+                key={chat.id}
+                title={chat.question}
+                accessories={[{ text: new Date(chat.created_at ?? 0).toLocaleDateString() }]}
+                detail={<AnswerDetailView chat={chat} />}
+                actions={chat && selectedAnswerId === chat.id ? getActionPanel(chat) : undefined}
+              />
+            ))}
+          </List.Section>
+        )}
+      </List>
+    </AuthProvider>
   );
 }

@@ -5,9 +5,10 @@ import { CopyActionSection } from "../actions/copy";
 import { FormInputActionSection } from "../actions/form-input";
 import { PreferencesActionSection } from "../actions/preferences";
 import { SaveActionSection } from "../actions/save";
-import { Chat, ChatViewProps } from "../type";
+import type { Chat, ChatViewProps } from "../type";
 import { AnswerDetailView } from "./answer-detail";
 import { EmptyView } from "./empty";
+import { AuthActionSection } from "../actions/auth";
 
 export const ChatView = ({
   data,
@@ -44,6 +45,7 @@ export const ChatView = ({
           </ActionPanel.Section>
         </>
       ) : null}
+      <AuthActionSection />
       <FormInputActionSection
         initialQuestion={question}
         onSubmit={(question, files) => use.chats.ask(question, files, conversation.model)}

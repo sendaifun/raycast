@@ -3,7 +3,7 @@ import { useGoogleAuth } from "./hooks/useGoogleAuth"; // Adjust path if needed
 
 export default function AuthView() {
   // Use the hook to get auth state and functions
-  const { isLoading, userEmail, error, signIn, signOut } = useGoogleAuth();
+  const { isLoading, error, signIn, signOut, isLoggedIn } = useGoogleAuth();
 
   // Show loading state
   if (isLoading) {
@@ -12,7 +12,7 @@ export default function AuthView() {
   }
 
   // Show error state
-  if (error && !userEmail) {
+  if (error && !isLoggedIn) {
     // Show error only if not logged in, otherwise might show transient errors
     return (
       <List>
@@ -33,18 +33,18 @@ export default function AuthView() {
   // Main UI based on login status
   return (
     <List>
-      {userEmail ? (
+      {isLoggedIn ? (
         // --- Logged In View ---
         <List.Section title="Account">
           <List.Item
             title="Signed in to Google"
-            subtitle={userEmail}
+            // subtitle={userEmail}
             icon={Icon.Person}
             actions={
               <ActionPanel>
                 <Action title="Sign out" onAction={signOut} />
                 {/* Add other actions for logged-in users */}
-                <Action.CopyToClipboard title="Copy Email" content={userEmail} />
+                {/* <Action.CopyToClipboard title="Copy Email" content={userEmail} /> */}
               </ActionPanel>
             }
           />
@@ -65,7 +65,7 @@ export default function AuthView() {
 
       {/* Add the rest of your extension's List Items/Sections below */}
       {/* These can be conditionally rendered based on userEmail if needed */}
-      {userEmail && (
+      {isLoggedIn && (
         <List.Section title="Your Features">
           <List.Item title="Feature available only when logged in" />
           {/* ... other items ... */}

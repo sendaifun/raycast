@@ -31,7 +31,7 @@ export function useChat<T extends Chat>(props: T[]): ChatHook {
 
   const history = useHistory();
   const isAutoTTS = useAutoTTS();
-  const { tools } = useAgentKit();
+  const { getTools } = useAgentKit();
   const openai = useAI();
 
   async function ask(question: string, files: string[], model: Model) {
@@ -65,7 +65,7 @@ export function useChat<T extends Chat>(props: T[]): ChatHook {
       const res = await generateText({
         model: openai(model.option),
         temperature: Number(model.temperature),
-        tools,
+        tools: await getTools(),
         messages: chatTransformer([...data.reverse(), chat], model.prompt),
         maxSteps: 5,
       });
