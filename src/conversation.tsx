@@ -4,10 +4,12 @@ import { DestructiveAction, PinAction, PrimaryAction } from "./actions";
 import { PreferencesActionSection } from "./actions/preferences";
 import Ask from "./ask";
 import { useConversations } from "./hooks/useConversations";
-import { Conversation as ConversationType } from "./type";
+import type { Conversation as ConversationType } from "./type";
 import { ConversationListView } from "./views/conversation-list";
 import { ExportData, ImportData } from "./utils/import-export";
 import { ImportForm } from "./views/import-form";
+import { AuthActionSection } from "./actions/auth";
+import AuthProvider from "./components/AuthProvider";
 
 export default function Conversation() {
   const conversations = useConversations();
@@ -53,6 +55,7 @@ export default function Conversation() {
   const getActionPanel = (conversation: ConversationType) => (
     <ActionPanel>
       <PrimaryAction title="Continue Ask" onAction={() => push(<Ask conversation={conversation} />)} />
+      <AuthActionSection />
       <PinAction
         title={conversation.pinned ? "Unpin Conversation" : "Pin Conversation"}
         isPinned={conversation.pinned}
@@ -103,67 +106,69 @@ export default function Conversation() {
   );
 
   return (
-    <List
-      isShowingDetail={false}
-      isLoading={conversations.isLoading}
-      filtering={false}
-      throttle={false}
-      selectedItemId={selectedConversationId || undefined}
-      onSelectionChange={(id) => {
-        if (id !== selectedConversationId) {
-          setSelectedConversationId(id);
-        }
-      }}
-      searchBarPlaceholder="Search conversation..."
-      searchText={searchText}
-      onSearchTextChange={setSearchText}
-    >
-      {conversations.data.length === 0 ? (
-        <List.EmptyView
-          title="No Conversation"
-          description="Your recent conversation will be showed up here"
-          icon={Icon.Stars}
-          actions={
-            <ActionPanel>
-              <Action
-                title={"Import Conversation"}
-                icon={Icon.Download}
-                onAction={() =>
-                  push(
-                    <ImportForm
-                      moduleName="Conversation"
-                      onSubmit={async (file) => {
-                        ImportData<ConversationType>("conversations", file).then((data) => {
-                          conversations.setConversations(data);
-                        });
-                      }}
-                    />,
-                  )
-                }
-              />
-            </ActionPanel>
+    <AuthProvider>
+      <List
+        isShowingDetail={false}
+        isLoading={conversations.isLoading}
+        filtering={false}
+        throttle={false}
+        selectedItemId={selectedConversationId || undefined}
+        onSelectionChange={(id) => {
+          if (id !== selectedConversationId) {
+            setSelectedConversationId(id);
           }
-        />
-      ) : (
-        <>
-          {pinnedConversation.length > 0 && (
-            <ConversationListView
-              title="Pinned"
-              conversations={pinnedConversation}
-              selectedConversation={selectedConversationId}
-              actionPanel={getActionPanel}
-            />
-          )}
-          {uniqueSortedConversations && (
-            <ConversationListView
-              title="Recent"
-              conversations={uniqueSortedConversations}
-              selectedConversation={selectedConversationId}
-              actionPanel={getActionPanel}
-            />
-          )}
-        </>
-      )}
-    </List>
+        }}
+        searchBarPlaceholder="Search conversation..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+      >
+        {conversations.data.length === 0 ? (
+          <List.EmptyView
+            title="No Conversation"
+            description="Your recent conversation will be showed up here"
+            icon={Icon.Stars}
+            actions={
+              <ActionPanel>
+                <Action
+                  title={"Import Conversation"}
+                  icon={Icon.Download}
+                  onAction={() =>
+                    push(
+                      <ImportForm
+                        moduleName="Conversation"
+                        onSubmit={async (file) => {
+                          ImportData<ConversationType>("conversations", file).then((data) => {
+                            conversations.setConversations(data);
+                          });
+                        }}
+                      />,
+                    )
+                  }
+                />
+              </ActionPanel>
+            }
+          />
+        ) : (
+          <>
+            {pinnedConversation.length > 0 && (
+              <ConversationListView
+                title="Pinned"
+                conversations={pinnedConversation}
+                selectedConversation={selectedConversationId}
+                actionPanel={getActionPanel}
+              />
+            )}
+            {uniqueSortedConversations && (
+              <ConversationListView
+                title="Recent"
+                conversations={uniqueSortedConversations}
+                selectedConversation={selectedConversationId}
+                actionPanel={getActionPanel}
+              />
+            )}
+          </>
+        )}
+      </List>
+    </AuthProvider>
   );
 }

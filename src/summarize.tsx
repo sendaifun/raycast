@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { DEFAULT_MODEL, useModel } from "./hooks/useModel";
 import { showFailureToast } from "@raycast/utils";
-import { Conversation, Model } from "./type";
+import type { Conversation, Model } from "./type";
 import Ask from "./ask";
 import { open } from "@raycast/api";
 import { PrimaryAction } from "./actions";
 import { useBrowserContent } from "./hooks/useBrowser";
 import { CacheAdapter } from "./utils/cache";
+import AuthProvider from "./components/AuthProvider";
 
 export default function Summarize() {
   if (!canAccessBrowserExtension()) {
@@ -78,73 +79,75 @@ export default function Summarize() {
   const { push } = useNavigation();
 
   return (
-    <Form
-      isLoading={loading || modelLoading}
-      actions={
-        <ActionPanel>
-          {!content && <RetryAction />}
-          <Action
-            title="Submit"
-            icon={Icon.Checkmark}
-            onAction={() => {
-              const chooseModel = data[selectedModelId] || DEFAULT_MODEL;
-              // PS: Ask page back to Summarize is purely new conversation
-              // we don't want to maintain the old conversation
-              const conversation: Conversation = {
-                id: uuidv4(),
-                chats: [],
-                model: chooseModel,
-                pinned: false,
-                updated_at: "",
-                created_at: new Date().toISOString(),
-              };
-              push(<Ask conversation={conversation} initialQuestion={question} />);
-            }}
-          />
-          {content && <RetryAction />}
-        </ActionPanel>
-      }
-    >
-      <Form.TextArea
-        id="question"
-        title="Question"
-        placeholder="Hydrate the website and prompt..."
-        onChange={setQuestion}
-        error={error || undefined}
-        value={question}
-        onFocus={() => {
-          setError("");
-        }}
-        onBlur={(event) => {
-          if (event.target.value?.length == 0) {
-            setError("Required");
-          } else {
+    <AuthProvider>
+      <Form
+        isLoading={loading || modelLoading}
+        actions={
+          <ActionPanel>
+            {!content && <RetryAction />}
+            <Action
+              title="Submit"
+              icon={Icon.Checkmark}
+              onAction={() => {
+                const chooseModel = data[selectedModelId] || DEFAULT_MODEL;
+                // PS: Ask page back to Summarize is purely new conversation
+                // we don't want to maintain the old conversation
+                const conversation: Conversation = {
+                  id: uuidv4(),
+                  chats: [],
+                  model: chooseModel,
+                  pinned: false,
+                  updated_at: "",
+                  created_at: new Date().toISOString(),
+                };
+                push(<Ask conversation={conversation} initialQuestion={question} />);
+              }}
+            />
+            {content && <RetryAction />}
+          </ActionPanel>
+        }
+      >
+        <Form.TextArea
+          id="question"
+          title="Question"
+          placeholder="Hydrate the website and prompt..."
+          onChange={setQuestion}
+          error={error || undefined}
+          value={question}
+          onFocus={() => {
             setError("");
-          }
-        }}
-      />
-      {
-        // the value not match any values warning so annoying
-        (defaultModel || separateDefaultModel) && (
-          <Form.Dropdown
-            id="model"
-            title="Model"
-            placeholder="Choose model"
-            value={selectedModelId}
-            onChange={setSelectedModelId}
-          >
-            {defaultModel && (
-              <Form.Dropdown.Item key={defaultModel.id} title={defaultModel.name} value={defaultModel.id} />
-            )}
-            <Form.Dropdown.Section title="Custom Models">
-              {separateDefaultModel &&
-                separateDefaultModel.map((model) => (
-                  <Form.Dropdown.Item value={model.id} title={model.name} key={model.id} />
-                ))}
-            </Form.Dropdown.Section>
-          </Form.Dropdown>
-        )
-      }
-    </Form>
+          }}
+          onBlur={(event) => {
+            if (event.target.value?.length === 0) {
+              setError("Required");
+            } else {
+              setError("");
+            }
+          }}
+        />
+        {
+          // the value not match any values warning so annoying
+          (defaultModel || separateDefaultModel) && (
+            <Form.Dropdown
+              id="model"
+              title="Model"
+              placeholder="Choose model"
+              value={selectedModelId}
+              onChange={setSelectedModelId}
+            >
+              {defaultModel && (
+                <Form.Dropdown.Item key={defaultModel.id} title={defaultModel.name} value={defaultModel.id} />
+              )}
+              <Form.Dropdown.Section title="Custom Models">
+                {separateDefaultModel &&
+                  separateDefaultModel.map((model) => (
+                    <Form.Dropdown.Item value={model.id} title={model.name} key={model.id} />
+                  ))}
+              </Form.Dropdown.Section>
+            </Form.Dropdown>
+          )
+        }
+      </Form>
+    </AuthProvider>
   );
 }

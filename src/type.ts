@@ -1,12 +1,21 @@
 // import type OpenAI from "openai";
 import type AI from "ai";
 
+export interface BackendTokenPayload {
+  sub: string; // Now contains the email
+  aud: string;
+  userId: string;
+  orgId: string;
+  wallet: string;
+  exp?: number;
+  iat?: number;
+}
+
 export type Set<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export interface Preferences {
   apiKey: string;
   rpcUrl: string;
-  privateKey: string;
   isAutoSaveConversation: boolean;
   isHistoryPaused: boolean;
   isAutoLoadText: boolean;

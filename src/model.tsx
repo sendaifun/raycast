@@ -3,12 +3,13 @@ import { useState } from "react";
 import { DestructiveAction, PinAction } from "./actions";
 import { PreferencesActionSection } from "./actions/preferences";
 import { DEFAULT_MODEL, useModel } from "./hooks/useModel";
-import { Model as ModelType } from "./type";
+import type { Model as ModelType } from "./type";
 import { ModelForm } from "./views/model/form";
 import { ModelListItem, ModelListView } from "./views/model/list";
 import { ExportData, ImportData } from "./utils/import-export";
 import { ImportForm } from "./views/import-form";
 import { COMMAND_MODEL_PREFIX } from "./hooks/useCommand";
+import AuthProvider from "./components/AuthProvider";
 
 export default function Model() {
   const models = useModel();
@@ -102,54 +103,56 @@ export default function Model() {
   );
 
   return (
-    <List
-      isShowingDetail // always show detail view, since the default model is always selected
-      isLoading={models.isLoading || models.isFetching}
-      filtering={false}
-      throttle={false}
-      selectedItemId={selectedModelId || undefined}
-      onSelectionChange={(id) => {
-        if (id !== selectedModelId) {
-          setSelectedModelId(id);
-        }
-      }}
-      searchBarPlaceholder="Search model..."
-      searchText={searchText}
-      onSearchTextChange={setSearchText}
-    >
-      {models.isFetching ? (
-        <List.EmptyView />
-      ) : (
-        <>
-          <ModelListItem
-            key="default"
-            model={defaultModelOnly}
-            selectedModel={selectedModelId}
-            actionPanel={getActionPanel}
-          />
-          <ModelListView
-            key="pinned"
-            title="Pinned"
-            models={customModelsOnly.filter((x) => x.pinned)}
-            selectedModel={selectedModelId}
-            actionPanel={getActionPanel}
-          />
-          <ModelListView
-            key="models"
-            title="Models"
-            models={customModelsOnly.filter((x) => !x.pinned)}
-            selectedModel={selectedModelId}
-            actionPanel={getActionPanel}
-          />
-          <ModelListView
-            key="ai-commands"
-            title="AI Commands (read-only)"
-            models={commandModelsOnly}
-            selectedModel={selectedModelId}
-            actionPanel={getActionPanel}
-          />
-        </>
-      )}
-    </List>
+    <AuthProvider>
+      <List
+        isShowingDetail // always show detail view, since the default model is always selected
+        isLoading={models.isLoading || models.isFetching}
+        filtering={false}
+        throttle={false}
+        selectedItemId={selectedModelId || undefined}
+        onSelectionChange={(id) => {
+          if (id !== selectedModelId) {
+            setSelectedModelId(id);
+          }
+        }}
+        searchBarPlaceholder="Search model..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+      >
+        {models.isFetching ? (
+          <List.EmptyView />
+        ) : (
+          <>
+            <ModelListItem
+              key="default"
+              model={defaultModelOnly}
+              selectedModel={selectedModelId}
+              actionPanel={getActionPanel}
+            />
+            <ModelListView
+              key="pinned"
+              title="Pinned"
+              models={customModelsOnly.filter((x) => x.pinned)}
+              selectedModel={selectedModelId}
+              actionPanel={getActionPanel}
+            />
+            <ModelListView
+              key="models"
+              title="Models"
+              models={customModelsOnly.filter((x) => !x.pinned)}
+              selectedModel={selectedModelId}
+              actionPanel={getActionPanel}
+            />
+            <ModelListView
+              key="ai-commands"
+              title="AI Commands (read-only)"
+              models={commandModelsOnly}
+              selectedModel={selectedModelId}
+              actionPanel={getActionPanel}
+            />
+          </>
+        )}
+      </List>
+    </AuthProvider>
   );
 }

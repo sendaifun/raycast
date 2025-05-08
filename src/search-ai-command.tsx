@@ -1,11 +1,12 @@
 import { Action, ActionPanel, Icon, LaunchType, List, useNavigation } from "@raycast/api";
 import { useState } from "react";
 import { DestructiveAction } from "./actions";
-import { Command, CommandHook } from "./type";
+import type { Command, CommandHook } from "./type";
 import packageJson from "../package.json";
 import { DEFAULT_COMMANDS, useCommand } from "./hooks/useCommand";
 import { CommandForm, iconsByContentSource } from "./views/command/from";
-import CommandView, { CommandLaunchProps } from "./views/command/command-view";
+import CommandView, { type CommandLaunchProps } from "./views/command/command-view";
+import AuthProvider from "./components/AuthProvider";
 
 export default function EntryPoint(props: CommandLaunchProps) {
   const requestModelId = props.launchContext?.commandId;
@@ -112,66 +113,68 @@ function SearchAiCommand() {
   );
 
   return (
-    <List
-      isShowingDetail={false}
-      isLoading={commands.isLoading}
-      filtering={false}
-      throttle={false}
-      selectedItemId={selectedCommandId || undefined}
-      onSelectionChange={(id) => {
-        if (id !== selectedCommandId) {
-          setSelectedCommandId(id);
-        }
-      }}
-      searchBarPlaceholder="Search AI commands..."
-      searchText={searchText}
-      onSearchTextChange={setSearchText}
-    >
-      <List.Section title="Built-In">
-        {filteredCommands
-          .filter((cmd) => commands.isDefault(cmd.id))
-          .map((cmd) => (
-            <List.Item
-              id={cmd.id}
-              key={cmd.id}
-              title={cmd.name}
-              accessories={[{ icon: iconsByContentSource[cmd.contentSource] }, { text: cmd.model }]}
-              actions={selectedCommandId === cmd.id ? getActionPanel(cmd) : undefined}
-            />
-          ))}
-      </List.Section>
-      <List.Section title="Custom">
-        {filteredCommands
-          .filter((cmd) => !commands.isDefault(cmd.id))
-          .map((cmd) => (
-            <List.Item
-              id={cmd.id}
-              key={cmd.id}
-              title={cmd.name}
-              accessories={[{ icon: iconsByContentSource[cmd.contentSource] }, { text: cmd.model }]}
-              actions={selectedCommandId === cmd.id ? getActionPanel(cmd) : undefined}
-            />
-          ))}
-      </List.Section>
-      {searchText !== "" && (
-        <List.Section title="Create New">
-          <List.Item
-            title={searchText}
-            subtitle="Create new AI Command"
-            icon={Icon.NewDocument}
-            actions={
-              <ActionPanel title="Create New">
-                <Action
-                  title="Create AI Command"
-                  icon={Icon.NewDocument}
-                  onAction={() => navigation.push(<CommandForm name={searchText} use={{ commands }} />)}
-                />
-              </ActionPanel>
-            }
-          />
+    <AuthProvider>
+      <List
+        isShowingDetail={false}
+        isLoading={commands.isLoading}
+        filtering={false}
+        throttle={false}
+        selectedItemId={selectedCommandId || undefined}
+        onSelectionChange={(id) => {
+          if (id !== selectedCommandId) {
+            setSelectedCommandId(id);
+          }
+        }}
+        searchBarPlaceholder="Search AI commands..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+      >
+        <List.Section title="Built-In">
+          {filteredCommands
+            .filter((cmd) => commands.isDefault(cmd.id))
+            .map((cmd) => (
+              <List.Item
+                id={cmd.id}
+                key={cmd.id}
+                title={cmd.name}
+                accessories={[{ icon: iconsByContentSource[cmd.contentSource] }, { text: cmd.model }]}
+                actions={selectedCommandId === cmd.id ? getActionPanel(cmd) : undefined}
+              />
+            ))}
         </List.Section>
-      )}
-    </List>
+        <List.Section title="Custom">
+          {filteredCommands
+            .filter((cmd) => !commands.isDefault(cmd.id))
+            .map((cmd) => (
+              <List.Item
+                id={cmd.id}
+                key={cmd.id}
+                title={cmd.name}
+                accessories={[{ icon: iconsByContentSource[cmd.contentSource] }, { text: cmd.model }]}
+                actions={selectedCommandId === cmd.id ? getActionPanel(cmd) : undefined}
+              />
+            ))}
+        </List.Section>
+        {searchText !== "" && (
+          <List.Section title="Create New">
+            <List.Item
+              title={searchText}
+              subtitle="Create new AI Command"
+              icon={Icon.NewDocument}
+              actions={
+                <ActionPanel title="Create New">
+                  <Action
+                    title="Create AI Command"
+                    icon={Icon.NewDocument}
+                    onAction={() => navigation.push(<CommandForm name={searchText} use={{ commands }} />)}
+                  />
+                </ActionPanel>
+              }
+            />
+          </List.Section>
+        )}
+      </List>
+    </AuthProvider>
   );
 }
 
