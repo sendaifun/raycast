@@ -42,19 +42,19 @@ export function useGoogleAuth() {
       await showToast(Toast.Style.Animated, "Signing In...");
       const tokenSet = await client.getTokens();
       if (tokenSet?.accessToken) {
-        const res = await fetch(BACKEND_CALLBACK_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokenSet.idToken}`,
-          },
-        });
-        const data = (await res.json()) as BackendAuthResponse;
-        if (data.token) {
-          await LocalStorage.setItem(STORAGE_KEYS.BACKEND_SESSION_TOKEN, data.token);
-        }
         if (tokenSet.refreshToken && tokenSet.isExpired()) {
           await client.setTokens(await refreshTokens(tokenSet.refreshToken));
+          const res = await fetch(BACKEND_CALLBACK_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${(await client.getTokens())?.idToken}`,
+            },
+          });
+          const data = (await res.json()) as BackendAuthResponse;
+          if (data.token) {
+            await LocalStorage.setItem(STORAGE_KEYS.BACKEND_SESSION_TOKEN, data.token);
+          }
         }
         setIsLoggedIn(true);
         return;

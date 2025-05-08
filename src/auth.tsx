@@ -62,15 +62,6 @@ export default function AuthView() {
           }
         />
       )}
-
-      {/* Add the rest of your extension's List Items/Sections below */}
-      {/* These can be conditionally rendered based on userEmail if needed */}
-      {isLoggedIn && (
-        <List.Section title="Your Features">
-          <List.Item title="Feature available only when logged in" />
-          {/* ... other items ... */}
-        </List.Section>
-      )}
     </List>
   );
 }
