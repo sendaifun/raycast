@@ -138,7 +138,7 @@ export function useGoogleAuth() {
 
       setIsLoggedIn(false);
       await showToast(Toast.Style.Success, "Successfully Signed Out");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Sign out failed:", err);
       setError("Failed to sign out.");
       await showToast(Toast.Style.Failure, "Sign Out Failed");

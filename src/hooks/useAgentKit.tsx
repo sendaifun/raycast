@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode";
 function hexToTransaction(hex: string) {
   try {
     return VersionedTransaction.deserialize(Buffer.from(hex, "hex"));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return Transaction.from(Buffer.from(hex, "hex"));
   }
