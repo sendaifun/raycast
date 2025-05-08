@@ -2,6 +2,7 @@ import { getPreferenceValues } from "@raycast/api";
 import OpenAI from "openai";
 import { useState } from "react";
 import { getConfigUrl } from "../utils";
+import type { Preferences } from "../type";
 
 export function useChatGPT(): OpenAI {
   const [chatGPT] = useState(() => {

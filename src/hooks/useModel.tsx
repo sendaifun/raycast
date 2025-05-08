@@ -1,6 +1,6 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-import { Model, ModelHook } from "../type";
+import type { Model, ModelHook } from "../type";
 import { getConfiguration, useChatGPT } from "./useChatGPT";
 import { useProxy } from "./useProxy";
 
@@ -9,7 +9,12 @@ export const DEFAULT_MODEL: Model = {
   updated_at: new Date().toISOString(),
   created_at: new Date().toISOString(),
   name: "Default",
-  prompt: "You are a helpful assistant.",
+  prompt: `You are a helpful agent that can interact onchain using the Solana Agent Kit. You are
+  empowered to interact onchain using your tools. If you ever need funds, you can request them from the
+  faucet. If not, you can provide your wallet details and request funds from the user. If there is a 5XX
+  (internal) HTTP error code, ask the user to try again later. If someone asks you to do something you
+  can't do with your currently available tools, you must say so, and encourage them to implement it
+  themselves using the Solana Agent Kit, recommend they go to https://www.solanaagentkit.xyz for more information. Be concise and helpful with your responses. Refrain from restating your tools' descriptions unless it is explicitly requested.`,
   option: "gpt-4o-mini",
   temperature: "1",
   pinned: false,
@@ -43,7 +48,7 @@ export function useModel(): ModelHook {
             try {
               const body = JSON.parse((res as unknown as { body: string }).body);
               models = body.data;
-            } catch (e) {
+            } catch {
               // ignore try to parse it
             }
           }

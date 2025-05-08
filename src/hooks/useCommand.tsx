@@ -1,6 +1,6 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-import { CommandHook, Command, Model } from "../type";
+import type { CommandHook, Command, Model } from "../type";
 import { useModel } from "./useModel";
 
 export const COMMAND_MODEL_PREFIX = "command";

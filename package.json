@@ -1,36 +1,13 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "chatgpt",
-  "title": "ChatGPT",
-  "description": "Interact with OpenAI's ChatGPT directly from your command bar",
+  "name": "solana-agent",
+  "title": "Solana Agent",
+  "description": "Interact with the Solana blockchain from Raycast using AI",
   "icon": "icon.png",
-  "author": "abielzulio",
-  "contributors": [
-    "erodactyl",
-    "pernielsentikaer",
-    "shichongrui",
-    "timolins",
-    "cruelmoney",
-    "sykuang",
-    "thanhlongb",
-    "k8scat",
-    "Nauxscript",
-    "lin",
-    "leeonfield",
-    "husniadil",
-    "luckykong",
-    "smilemachine",
-    "iamEvan",
-    "alex925"
-  ],
-  "pastContributors": [
-    "pomdtr",
-    "Lemon"
-  ],
+  "author": "michael_essiet_emsaa",
+  "contributors": [],
   "categories": [
     "Productivity",
-    "Developer Tools",
-    "Web",
     "Fun",
     "Finance",
     "Other"
@@ -40,42 +17,42 @@
     {
       "name": "ask",
       "title": "Ask Question",
-      "subtitle": "ChatGPT",
-      "description": "Ask ChatGPT via Raycast",
+      "subtitle": "Solana Agent",
+      "description": "Ask Solana Agent via Raycast",
       "mode": "view"
     },
     {
       "name": "saved",
       "title": "Saved Answers",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your saved answer",
       "mode": "view"
     },
     {
       "name": "history",
       "title": "History",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your recent answer",
       "mode": "view"
     },
     {
       "name": "conversation",
       "title": "Conversations",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your recent conversation",
       "mode": "view"
     },
     {
       "name": "model",
       "title": "Models",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Collection of your custom and default model",
       "mode": "view"
     },
     {
       "name": "summarize",
       "title": "Summarize Website",
-      "subtitle": "ChatGPT",
+      "subtitle": "Solana Agent",
       "description": "Summarize Website and YouTube video",
       "mode": "view",
       "preferences": [
@@ -92,36 +69,6 @@
           "type": "file",
           "title": "Prompt template for the YouTube",
           "required": false
-        }
-      ]
-    },
-    {
-      "name": "ask-selected-image",
-      "title": "Ask Selected Image",
-      "description": "Template with a plain detail view",
-      "mode": "view",
-      "icon": "vision.png",
-      "arguments": [
-        {
-          "name": "query",
-          "type": "text",
-          "required": false,
-          "placeholder": "What is it?"
-        }
-      ]
-    },
-    {
-      "name": "ask-clipboard-image",
-      "title": "Ask Clipboard Image",
-      "description": "Template with a plain detail view",
-      "mode": "view",
-      "icon": "vision.png",
-      "arguments": [
-        {
-          "name": "query",
-          "type": "text",
-          "required": false,
-          "placeholder": "What is it?"
         }
       ]
     },
@@ -160,17 +107,17 @@
       "label": "Solana wallet private key",
       "description": "Enter the private key of the wallet you would like to use",
       "type": "password",
-      "title": "Solana Private Key",
+      "title": "Solana Wallet Private Key",
       "required": true
     },
     {
-      "name": "useStream",
-      "label": "Enable streaming completions",
-      "description": "Stream the completions of the generated answer",
-      "type": "checkbox",
-      "title": "Stream Completion",
-      "default": true,
-      "required": true
+      "name": "rpcUrl",
+      "label": "RPC URL",
+      "description": "RPC URL of the provider you'd like to use",
+      "type": "textfield",
+      "title": "Solana RPC URL",
+      "required": true,
+      "default": "https://api.mainnet-beta.solana.com"
     },
     {
       "name": "isAutoSaveConversation",
@@ -348,30 +295,38 @@
     }
   ],
   "dependencies": {
+    "@ai-sdk/openai": "^1.2.1",
     "@nem035/gpt-3-encoder": "^1.1.7",
-    "@raycast/api": "^1.88.4",
-    "@raycast/utils": "^1.18.1",
+    "@raycast/api": "^1.94.2",
+    "@raycast/utils": "^1.17.0",
+    "@solana-agent-kit/plugin-token": "^2.0.0-beta.8",
+    "@solana/web3.js": "^1.98.0",
     "@types/uuid": "^10.0.0",
+    "ai": "^4.1.54",
+    "bs58": "^6.0.0",
     "cross-fetch": "^4.1.0",
     "csv-parse": "^5.6.0",
     "image-meta": "^0.2.1",
     "moment": "^2.30.1",
+    "node-fetch": "^3.3.2",
     "openai": "^4.77.0",
     "plist": "^3.1.0",
     "proxy-agent": "^6.5.0",
+    "rpc-websockets": "^7.11.0",
     "run-applescript": "^7.0.0",
     "say": "^0.16.0",
+    "solana-agent-kit": "^2.0.0-beta.8",
     "uuid": "^9.0.0",
     "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
-    "@raycast/eslint-config": "^1.0.11",
+    "@raycast/eslint-config": "^2.0.4",
     "@types/node": "20.8.10",
     "@types/plist": "^3.0.5",
-    "@types/react": "18.3.3",
-    "eslint": "^8.57.0",
-    "prettier": "^3.3.3",
-    "typescript": "^5.4.5"
+    "@types/react": "^19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
   },
   "scripts": {
     "build": "ray build -e dist",
