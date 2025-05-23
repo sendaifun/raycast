@@ -15,13 +15,6 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "auth",
-      "title": "Authenticate",
-      "subtitle": "Solana Agent",
-      "description": "Authenticate the Solana Agent",
-      "mode": "view"
-    },
-    {
       "name": "ask",
       "title": "Ask Question",
       "subtitle": "Solana Agent",

@@ -16,7 +16,6 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
     }
   }, [isLoggedIn, isLoading]);
 
-  // return <>{isLoggedIn ? props.children : <Detail markdown={"Please log in to access this action"} />}</>;
   return (
     <>
       {isLoggedIn ? (
