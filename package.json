@@ -298,7 +298,7 @@
     "@nem035/gpt-3-encoder": "^1.1.7",
     "@raycast/api": "^1.94.2",
     "@raycast/utils": "^1.17.0",
-    "@solana-agent-kit/plugin-token": "^2.0.2",
+    "@solana-agent-kit/plugin-god-mode": "^0.0.1",
     "@solana/web3.js": "^1.98.0",
     "@types/uuid": "^10.0.0",
     "ai": "^4.1.54",

@@ -2,7 +2,7 @@ import { getPreferenceValues, LocalStorage } from "@raycast/api";
 import type { BackendTokenPayload, Preferences } from "../type";
 import { createVercelAITools, SolanaAgentKit } from "solana-agent-kit";
 import { Connection, PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
-import TokenPlugin from "@solana-agent-kit/plugin-token";
+import GodModePlugin from "@solana-agent-kit/plugin-god-mode";
 import { backendClient, STORAGE_KEYS } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
 
@@ -101,16 +101,16 @@ export default function useAgentKit() {
             }
             return { signature: txid };
           } catch (e) {
-            console.error("Error sending transaction:", e.data);
+            console.error("Error sending transaction:", e);
             throw e;
           }
         },
       },
-      preferences.rpcUrl,
+      "https://rpc.sendai.fun",
       {
         OPENAI_API_KEY: preferences.apiKey,
       },
-    ).use(TokenPlugin);
+    ).use(GodModePlugin);
   };
 
   const getTools = async () => {
