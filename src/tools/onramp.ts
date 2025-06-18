@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ amount }: { amount?: number }) {
+export default withAccessToken(provider)(async ({ amount }: { amount?: number }) => {
   try {
     console.log("getting onramp URL", amount);
     const params: Record<string, number> = {};
@@ -20,4 +22,4 @@ export default async function ({ amount }: { amount?: number }) {
       error: error,
     };
   }
-}
+});

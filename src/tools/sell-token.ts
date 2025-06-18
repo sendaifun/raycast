@@ -1,6 +1,14 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ inputAmount, inputMint }: { inputAmount: number; inputMint: string }) {
+export default withAccessToken(provider)(async ({
+  inputAmount,
+  inputMint,
+}: {
+  inputAmount: number;
+  inputMint: string;
+}) => {
   try {
     console.log("selling token", inputMint, inputAmount);
     const result = await executeAction("sell", {
@@ -20,4 +28,4 @@ export default async function ({ inputAmount, inputMint }: { inputAmount: number
       error: error,
     };
   }
-}
+});

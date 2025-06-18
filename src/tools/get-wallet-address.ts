@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async function () {
   try {
-    console.log("getting wallet address");
     const result = await executeAction("getWalletAddress");
     return {
       status: "success",

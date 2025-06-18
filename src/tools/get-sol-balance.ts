@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function () {
+export default withAccessToken(provider)(async function () {
   try {
     console.log("getting SOL balance");
     const result = await executeAction("getSolBalance");
@@ -17,4 +19,4 @@ export default async function () {
       error: error,
     };
   }
-}
+});
