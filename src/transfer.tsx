@@ -4,15 +4,15 @@ import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
-function BuyToken() {
+function Transfer() {
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(values: { outputMint: string; inputAmount: string }) {
+  async function handleSubmit(values: { to: string; amount: string }) {
     try {
       setIsLoading(true);
-      const inputAmount = parseFloat(values.inputAmount);
+      const amount = parseFloat(values.amount);
 
-      if (isNaN(inputAmount) || inputAmount <= 0) {
+      if (isNaN(amount) || amount <= 0) {
         await showToast({
           style: Toast.Style.Failure,
           title: "Invalid amount",
@@ -20,22 +20,32 @@ function BuyToken() {
         });
         return;
       }
-      const result = await executeAction("buy", {
-        outputMint: values.outputMint,
-        inputAmount: inputAmount,
+
+      if (!values.to || values.to.trim() === "") {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Invalid address",
+          message: "Please enter a valid wallet address",
+        });
+        return;
+      }
+
+      await executeAction("transfer", {
+        to: values.to,
+        amount: amount,
       });
 
       await showToast({
         style: Toast.Style.Success,
         title: "Success",
-        message: `Token purchase executed successfully ${result.data?.toString()}`,
+        message: `SOL transfer executed successfully`,
       });
     } catch (error) {
       console.error(error);
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to execute token purchase",
+        message: "Failed to execute SOL transfer",
       });
     } finally {
       setIsLoading(false);
@@ -47,14 +57,14 @@ function BuyToken() {
       isLoading={isLoading}
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Buy" onSubmit={handleSubmit} />
+          <Action.SubmitForm title="Transfer" onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
-      <Form.TextField id="outputMint" title="Token Address" placeholder="Enter token CA" />
-      <Form.TextField id="inputAmount" title="Amount (in SOL)" placeholder="Enter amount to spend" />
+      <Form.TextField id="to" title="To Address" placeholder="Enter wallet address" />
+      <Form.TextField id="amount" title="Amount (in SOL)" placeholder="Enter amount to transfer" />
     </Form>
   );
 }
 
-export default withAccessToken(provider)(BuyToken);
+export default withAccessToken(provider)(Transfer);

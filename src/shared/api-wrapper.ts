@@ -29,6 +29,7 @@ export async function executeAction<T>(method: string, params: ApiParams = {}): 
         },
       },
     );
+    console.log("response", response.data);
     return response.data;
   } catch (error) {
     return {

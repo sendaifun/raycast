@@ -41,6 +41,153 @@
       "subtitle": "Solana Agent",
       "description": "Collection of your recent answer",
       "mode": "view"
+    },
+    {
+      "name": "balance",
+      "title": "Balance",
+      "subtitle": "Send AI Agent",
+      "description": "Get the balance of the wallet",
+      "mode": "view"
+    },
+    {
+      "name": "transfer",
+      "title": "Transfer SOL",
+      "subtitle": "Send AI Agent",
+      "description": "Transfer SOL to another wallet address",
+      "mode": "view"
+    },
+    {
+      "name": "transfer-spl",
+      "title": "Transfer SPL Token",
+      "subtitle": "Send AI Agent",
+      "description": "Transfer SPL tokens to another wallet address",
+      "mode": "view"
+    },
+    {
+      "name": "get-wallet-address",
+      "title": "Get Wallet Address",
+      "subtitle": "Send AI Agent",
+      "description": "Get the current wallet address",
+      "mode": "view"
+    },
+    {
+      "name": "get-token-balance",
+      "title": "Get Token Balance",
+      "subtitle": "Send AI Agent",
+      "description": "Get the balance of a specific token",
+      "mode": "view"
+    },
+    {
+      "name": "get-token-data-by-ticker",
+      "title": "Get Token Data by Ticker",
+      "subtitle": "Send AI Agent",
+      "description": "Get token information using its ticker symbol",
+      "mode": "view"
+    },
+    {
+      "name": "sell-token",
+      "title": "Sell Token",
+      "subtitle": "Send AI Agent",
+      "description": "Sell a specific token",
+      "mode": "view"
+    },
+    {
+      "name": "fetch-price",
+      "title": "Fetch Price",
+      "subtitle": "Send AI Agent",
+      "description": "Get the current price of a token",
+      "mode": "view"
+    },
+    {
+      "name": "get-token",
+      "title": "Get Token",
+      "subtitle": "Send AI Agent",
+      "description": "Get information about a specific token",
+      "mode": "view"
+    },
+    {
+      "name": "get-trending-tokens",
+      "title": "Get Trending Tokens",
+      "subtitle": "Send AI Agent",
+      "description": "Get list of trending tokens",
+      "mode": "view"
+    },
+    {
+      "name": "bridge",
+      "title": "Bridge Tokens",
+      "subtitle": "Send AI Agent",
+      "description": "Bridge tokens between different chains",
+      "mode": "view"
+    },
+    {
+      "name": "onramp",
+      "title": "Onramp",
+      "subtitle": "Send AI Agent",
+      "description": "Onramp fiat to crypto",
+      "mode": "view"
+    },
+    {
+      "name": "lulo-get-apy",
+      "title": "Get Lulo APY",
+      "subtitle": "Send AI Agent",
+      "description": "Get APY information from Lulo",
+      "mode": "view"
+    },
+    {
+      "name": "get-sol-price",
+      "title": "Get SOL Price",
+      "subtitle": "Send AI Agent",
+      "description": "Get current SOL price",
+      "mode": "view"
+    },
+    {
+      "name": "get-portfolio",
+      "title": "Get Portfolio",
+      "subtitle": "Send AI Agent",
+      "description": "Get your token portfolio",
+      "mode": "view"
+    },
+    {
+      "name": "get-top-lst",
+      "title": "Get Top LST",
+      "subtitle": "Send AI Agent",
+      "description": "Get top liquid staking tokens",
+      "mode": "view"
+    },
+    {
+      "name": "sanctum-get-lst-apy",
+      "title": "Get Sanctum LST APY",
+      "subtitle": "Send AI Agent",
+      "description": "Get APY information for Sanctum LST",
+      "mode": "view"
+    },
+    {
+      "name": "rugcheck",
+      "title": "Rugcheck",
+      "subtitle": "Send AI Agent",
+      "description": "Check if a token is safe from rug pulls",
+      "mode": "view"
+    },
+    {
+      "name": "launch-pump-fun-token",
+      "title": "Launch Pump Fun Token",
+      "subtitle": "Send AI Agent",
+      "description": "Launch a new fun token",
+      "mode": "view"
+    },
+    {
+      "name": "get-sol-balance",
+      "title": "Get SOL Balance",
+      "subtitle": "Send AI Agent",
+      "description": "Get your SOL balance",
+      "mode": "view"
+    },
+    {
+      "name": "lulo-lend",
+      "title": "Lulo Lend",
+      "subtitle": "Send AI Agent",
+      "description": "Lend tokens through Lulo",
+      "mode": "view"
     }
   ],
   "tools": [
