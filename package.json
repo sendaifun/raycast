@@ -446,14 +446,6 @@
   ],
   "preferences": [
     {
-      "name": "apiKey",
-      "label": "Open AI API Key",
-      "description": "Enter your personal Open AI API Key",
-      "type": "password",
-      "title": "API Key",
-      "required": true
-    },
-    {
       "name": "rpcUrl",
       "label": "RPC URL",
       "description": "RPC URL of the provider you'd like to use",
