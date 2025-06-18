@@ -6,7 +6,7 @@ import { OAuth } from "@raycast/api";
 
 const GOOGLE_CLIENT_ID = "12412930892-lglh33r17pqmobh28op3v9rv5nj9trbg.apps.googleusercontent.com";
 
-const client = new OAuth.PKCEClient({
+export const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.AppURI,
   providerName: "Google",
   providerIcon: "google-logo.jpg",
@@ -14,7 +14,7 @@ const client = new OAuth.PKCEClient({
   description: "Connect your Google account\n(Solana Agent)",
 });
 
-interface BackendAuthResponse {
+export interface BackendAuthResponse {
   token?: string;
   message?: string;
 }
@@ -63,8 +63,7 @@ export function useGoogleAuth() {
       const authRequest = await client.authorizationRequest({
         endpoint: "https://accounts.google.com/o/oauth2/v2/auth",
         clientId: GOOGLE_CLIENT_ID,
-        scope:
-          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.readonly",
+        scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
       });
       const { authorizationCode } = await client.authorize(authRequest);
       const tokens = await fetchTokens(authRequest, authorizationCode);
