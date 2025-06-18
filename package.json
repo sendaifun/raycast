@@ -15,6 +15,13 @@
   "license": "MIT",
   "commands": [
     {
+      "name": "buy",
+      "title": "Buy",
+      "subtitle": "Solana Agent",
+      "description": "Buy a token",
+      "mode": "view"
+    },
+    {
       "name": "auth",
       "title": "Authenticate",
       "subtitle": "Solana Agent",
@@ -29,69 +36,272 @@
       "mode": "view"
     },
     {
-      "name": "saved",
-      "title": "Saved Answers",
-      "subtitle": "Solana Agent",
-      "description": "Collection of your saved answer",
-      "mode": "view"
-    },
-    {
       "name": "history",
       "title": "History",
       "subtitle": "Solana Agent",
       "description": "Collection of your recent answer",
       "mode": "view"
-    },
+    }
+  ],
+  "tools": [
     {
-      "name": "conversation",
-      "title": "Conversations",
-      "subtitle": "Solana Agent",
-      "description": "Collection of your recent conversation",
-      "mode": "view"
-    },
-    {
-      "name": "model",
-      "title": "Models",
-      "subtitle": "Solana Agent",
-      "description": "Collection of your custom and default model",
-      "mode": "view"
-    },
-    {
-      "name": "summarize",
-      "title": "Summarize Website",
-      "subtitle": "Solana Agent",
-      "description": "Summarize Website and YouTube video",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "promptTemplate",
-          "description": "Template support {{content}} tag, and it will replace with the content",
-          "type": "file",
-          "title": "Prompt template for the website",
-          "required": false
-        },
-        {
-          "name": "promptTemplate2",
-          "description": "Template support {{content}} tag, and it will replace with the video transcript",
-          "type": "file",
-          "title": "Prompt template for the YouTube",
-          "required": false
-        }
+      "name": "add-numbers",
+      "title": "Add Numbers",
+      "description": "Add two numbers together",
+      "keywords": [
+        "add",
+        "plus",
+        "sum",
+        "math",
+        "calculate",
+        "addition"
       ]
     },
     {
-      "name": "create-ai-command",
-      "title": "Create AI Command",
-      "description": "Create new quick AI command",
-      "mode": "view",
-      "icon": "icon.png"
+      "name": "balance",
+      "title": "Balance",
+      "description": "Get the balance of the wallet",
+      "keywords": [
+        "balance",
+        "solana",
+        "wallet",
+        "sol in wallet"
+      ]
     },
     {
-      "name": "search-ai-command",
-      "title": "Search AI Command",
-      "description": "Search AI commands",
-      "mode": "view",
-      "icon": "icon.png"
+      "name": "buy-token",
+      "title": "Buy Token",
+      "description": "Buy a specific token by its address",
+      "keywords": [
+        "buy",
+        "token",
+        "purchase",
+        "crypto",
+        "solana"
+      ]
+    },
+    {
+      "name": "transfer",
+      "title": "Transfer SOL",
+      "description": "Transfer SOL to another wallet address",
+      "keywords": [
+        "transfer",
+        "send",
+        "sol",
+        "wallet",
+        "transaction"
+      ]
+    },
+    {
+      "name": "transfer-spl",
+      "title": "Transfer SPL Token",
+      "description": "Transfer SPL tokens to another wallet address",
+      "keywords": [
+        "transfer",
+        "spl",
+        "token",
+        "send",
+        "transaction"
+      ]
+    },
+    {
+      "name": "get-wallet-address",
+      "title": "Get Wallet Address",
+      "description": "Get the current wallet address",
+      "keywords": [
+        "wallet",
+        "address",
+        "public key",
+        "account"
+      ]
+    },
+    {
+      "name": "get-token-balance",
+      "title": "Get Token Balance",
+      "description": "Get the balance of a specific token",
+      "keywords": [
+        "token",
+        "balance",
+        "amount",
+        "holdings"
+      ]
+    },
+    {
+      "name": "get-token-data-by-ticker",
+      "title": "Get Token Data by Ticker",
+      "description": "Get token information using its ticker symbol",
+      "keywords": [
+        "token",
+        "ticker",
+        "symbol",
+        "info",
+        "data"
+      ]
+    },
+    {
+      "name": "sell-token",
+      "title": "Sell Token",
+      "description": "Sell a specific token",
+      "keywords": [
+        "sell",
+        "token",
+        "trade",
+        "exchange"
+      ]
+    },
+    {
+      "name": "fetch-price",
+      "title": "Fetch Price",
+      "description": "Get the current price of a token",
+      "keywords": [
+        "price",
+        "token",
+        "value",
+        "market"
+      ]
+    },
+    {
+      "name": "get-token",
+      "title": "Get Token",
+      "description": "Get information about a specific token",
+      "keywords": [
+        "token",
+        "info",
+        "details",
+        "metadata"
+      ]
+    },
+    {
+      "name": "get-trending-tokens",
+      "title": "Get Trending Tokens",
+      "description": "Get list of trending tokens",
+      "keywords": [
+        "trending",
+        "popular",
+        "tokens",
+        "market"
+      ]
+    },
+    {
+      "name": "bridge",
+      "title": "Bridge Tokens",
+      "description": "Bridge tokens between different chains",
+      "keywords": [
+        "bridge",
+        "cross-chain",
+        "transfer",
+        "migrate"
+      ]
+    },
+    {
+      "name": "onramp",
+      "title": "Onramp",
+      "description": "Onramp fiat to crypto",
+      "keywords": [
+        "onramp",
+        "fiat",
+        "buy",
+        "deposit"
+      ]
+    },
+    {
+      "name": "lulo-get-apy",
+      "title": "Get Lulo APY",
+      "description": "Get APY information from Lulo",
+      "keywords": [
+        "lulo",
+        "apy",
+        "yield",
+        "interest"
+      ]
+    },
+    {
+      "name": "get-sol-price",
+      "title": "Get SOL Price",
+      "description": "Get current SOL price",
+      "keywords": [
+        "sol",
+        "price",
+        "value",
+        "market"
+      ]
+    },
+    {
+      "name": "get-portfolio",
+      "title": "Get Portfolio",
+      "description": "Get your token portfolio",
+      "keywords": [
+        "portfolio",
+        "holdings",
+        "tokens",
+        "assets"
+      ]
+    },
+    {
+      "name": "get-top-lst",
+      "title": "Get Top LST",
+      "description": "Get top liquid staking tokens",
+      "keywords": [
+        "lst",
+        "liquid",
+        "staking",
+        "tokens"
+      ]
+    },
+    {
+      "name": "sanctum-get-lst-apy",
+      "title": "Get Sanctum LST APY",
+      "description": "Get APY information for Sanctum LST",
+      "keywords": [
+        "sanctum",
+        "lst",
+        "apy",
+        "yield"
+      ]
+    },
+    {
+      "name": "rugcheck",
+      "title": "Rugcheck",
+      "description": "Check if a token is safe from rug pulls",
+      "keywords": [
+        "rug",
+        "safety",
+        "check",
+        "verify"
+      ]
+    },
+    {
+      "name": "launch-pump-fun-token",
+      "title": "Launch Pump Fun Token",
+      "description": "Launch a new fun token",
+      "keywords": [
+        "launch",
+        "token",
+        "create",
+        "new"
+      ]
+    },
+    {
+      "name": "get-sol-balance",
+      "title": "Get SOL Balance",
+      "description": "Get your SOL balance",
+      "keywords": [
+        "sol",
+        "balance",
+        "amount",
+        "holdings"
+      ]
+    },
+    {
+      "name": "lulo-lend",
+      "title": "Lulo Lend",
+      "description": "Lend tokens through Lulo",
+      "keywords": [
+        "lulo",
+        "lend",
+        "loan",
+        "borrow"
+      ]
     }
   ],
   "keywords": [
@@ -300,8 +510,10 @@
     "@raycast/utils": "^1.17.0",
     "@solana-agent-kit/plugin-god-mode": "^0.0.1",
     "@solana/web3.js": "^1.98.0",
+    "@types/axios": "^0.14.4",
     "@types/uuid": "^10.0.0",
     "ai": "^4.1.54",
+    "axios": "^1.10.0",
     "bs58": "^6.0.0",
     "cross-fetch": "^4.1.0",
     "csv-parse": "^5.6.0",
@@ -323,6 +535,7 @@
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "20.8.10",
     "@types/plist": "^3.0.5",
     "@types/react": "^19.0.10",

@@ -1,0 +1,23 @@
+import { executeAction } from "../shared/api-wrapper";
+
+export default async function ({ outputMint, inputAmount }: { outputMint: string; inputAmount: number }) {
+  try {
+    console.log("buying token", outputMint, inputAmount);
+    const result = await executeAction("buy", {
+      outputMint: outputMint,
+      inputAmount: inputAmount,
+    });
+    return {
+      status: "success",
+      message: "Trade executed successfully",
+      result: result,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "error",
+      message: "Error executing trade",
+      error: error,
+    };
+  }
+}
