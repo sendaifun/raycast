@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ inputs }: { inputs: string[] }) {
+export default withAccessToken(provider)(async ({ inputs }: { inputs: string[] }) => {
   try {
     console.log("getting Sanctum LST APY", inputs);
     const result = await executeAction("sanctumGetLSTAPY", {
@@ -19,4 +21,4 @@ export default async function ({ inputs }: { inputs: string[] }) {
       error: error,
     };
   }
-}
+});

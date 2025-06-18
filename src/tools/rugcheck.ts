@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ mint }: { mint: string }) {
+export default withAccessToken(provider)(async ({ mint }: { mint: string }) => {
   try {
     console.log("checking rug for token", mint);
     const result = await executeAction("rugcheck", {
@@ -19,4 +21,4 @@ export default async function ({ mint }: { mint: string }) {
       error: error,
     };
   }
-}
+});

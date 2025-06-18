@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({
+export default withAccessToken(provider)(async ({
   name,
   symbol,
   description,
@@ -18,7 +20,7 @@ export default async function ({
   twitter?: string;
   telegram?: string;
   website?: string;
-}) {
+}) => {
   try {
     console.log("launching Pump.fun token", { name, symbol, amount });
     const params: Record<string, string | number> = {
@@ -47,4 +49,4 @@ export default async function ({
       error: error,
     };
   }
-}
+});

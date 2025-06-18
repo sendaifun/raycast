@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ tokenId }: { tokenId: string }) {
+export default withAccessToken(provider)(async ({ tokenId }: { tokenId: string }) => {
   try {
     console.log("fetching price for token", tokenId);
     const result = await executeAction("fetchPrice", {
@@ -19,4 +21,4 @@ export default async function ({ tokenId }: { tokenId: string }) {
       error: error,
     };
   }
-}
+});

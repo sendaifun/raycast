@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ ticker }: { ticker: string }) {
+export default withAccessToken(provider)(async ({ ticker }: { ticker: string }) => {
   try {
     console.log("getting token data by ticker", ticker);
     const result = await executeAction("getTokenDataByTicker", {
@@ -19,4 +21,4 @@ export default async function ({ ticker }: { ticker: string }) {
       error: error,
     };
   }
-}
+});

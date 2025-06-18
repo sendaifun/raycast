@@ -1,6 +1,8 @@
+import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
+import { provider } from "../utils/auth";
 
-export default async function ({ tokenAddress }: { tokenAddress: string }) {
+export default withAccessToken(provider)(async ({ tokenAddress }: { tokenAddress: string }) => {
   try {
     console.log("getting token", tokenAddress);
     const result = await executeAction("getToken", {
@@ -19,4 +21,4 @@ export default async function ({ tokenAddress }: { tokenAddress: string }) {
       error: error,
     };
   }
-}
+});
