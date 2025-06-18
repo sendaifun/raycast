@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "solana-agent",
-  "title": "Solana Agent",
-  "description": "Interact with the Solana blockchain from Raycast using AI",
+  "name": "send-ai-agent",
+  "title": "Send AI Agent",
+  "description": "Interact with the Send AI Agent from Raycast using AI",
   "icon": "icon.png",
   "author": "michael_essiet_emsaa",
   "contributors": [],
@@ -15,17 +15,17 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "buy",
-      "title": "Buy",
-      "subtitle": "Solana Agent",
+      "name": "buy-token",
+      "title": "Buy Token",
+      "subtitle": "Send AI Agent",
       "description": "Buy a token",
       "mode": "view"
     },
     {
       "name": "auth",
       "title": "Authenticate",
-      "subtitle": "Solana Agent",
-      "description": "Authenticate the Solana Agent",
+      "subtitle": "Send AI Agent",
+      "description": "Authenticate the Send AI Agent",
       "mode": "view"
     },
     {
@@ -44,19 +44,6 @@
     }
   ],
   "tools": [
-    {
-      "name": "add-numbers",
-      "title": "Add Numbers",
-      "description": "Add two numbers together",
-      "keywords": [
-        "add",
-        "plus",
-        "sum",
-        "math",
-        "calculate",
-        "addition"
-      ]
-    },
     {
       "name": "balance",
       "title": "Balance",
@@ -324,7 +311,7 @@
       "label": "RPC URL",
       "description": "RPC URL of the provider you'd like to use",
       "type": "textfield",
-      "title": "Solana RPC URL",
+      "title": "Send AI RPC URL",
       "required": true,
       "default": "https://api.mainnet-beta.solana.com"
     },
