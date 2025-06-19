@@ -6,13 +6,13 @@ export default withAccessToken(provider)(async ({
   inputAmount,
   inputMint,
 }: {
-  inputAmount: number;
+  inputAmount: string;
   inputMint: string;
 }) => {
   try {
     console.log("selling token", inputMint, inputAmount);
     const result = await executeAction("sell", {
-      inputAmount: inputAmount,
+      inputAmount: parseFloat(inputAmount),
       inputMint: inputMint,
     });
     return {

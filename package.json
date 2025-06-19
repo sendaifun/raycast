@@ -210,7 +210,7 @@
     {
       "name": "buy-token",
       "title": "Buy Token",
-      "description": "This tool can be used to buy tokens. This buys tokens using SOL. User is aware that they are buying tokens using SOL and don't need to be told that.",
+      "description": "This tool can be used to buy tokens. This buys tokens using SOL. User is aware that they are buying tokens using SOL and don't need to be told that. this function acess token address and not the ticker if ticker is given then get the token info of that ticker and then buy the token",
       "keywords": [
         "buy tokens",
         "buy sol",
@@ -544,7 +544,7 @@
     }
   ],
   "ai": {
-    "instructions": ""
+    "instructions": "if asked to buy or sell tokens, then do a deep think, check if user is asking to buy which token, is it a token address or a ticker, if ticker then get token info of that ticker and then buy the token, only call getTrendingToken if user explicitly mentions about it don't call it if user mentions the token name, if user mentions the number of tokens to be bought then first fetch the price of token calculate the input amount in sol and then pass it to buy or sell token function"
   },
   "keywords": [
     "chat",

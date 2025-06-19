@@ -2,11 +2,11 @@ import { executeAction } from "../shared/api-wrapper";
 import { withAccessToken } from "@raycast/utils";
 import { provider } from "../utils/auth";
 
-export default withAccessToken(provider)(async ({ amount }: { amount: number }) => {
+export default withAccessToken(provider)(async ({ amount }: { amount: string }) => {
   try {
     console.log("generating bridge URL", amount);
     const result = await executeAction("bridge", {
-      amount: amount,
+      amount: parseFloat(amount),
     });
     return {
       status: "success",
