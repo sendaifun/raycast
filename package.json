@@ -194,8 +194,13 @@
     {
       "name": "balance",
       "title": "Balance",
-      "description": "Get the balance of the wallet",
+      "description": "This action/tool is used to check the balance of a the user's wallet. The balance is in SOL, the native token of Solana. When using this action, the user is aware that they are checking the balance of their wallet and not the balance of a specific token.",
       "keywords": [
+        "check balance",
+        "check solana balance",
+        "get wallet balance",
+        "view balance",
+        "show balance",
         "balance",
         "solana",
         "wallet",
@@ -205,8 +210,10 @@
     {
       "name": "buy-token",
       "title": "Buy Token",
-      "description": "Buy a specific token by its address",
+      "description": "This tool can be used to buy tokens. This buys tokens using SOL. User is aware that they are buying tokens using SOL and don't need to be told that.",
       "keywords": [
+        "buy tokens",
+        "buy sol",
         "buy",
         "token",
         "purchase",
@@ -217,8 +224,12 @@
     {
       "name": "transfer",
       "title": "Transfer SOL",
-      "description": "Transfer SOL to another wallet address",
+      "description": "This action/tool is used to transfer SOL, the native token of Solana, to another wallet address which is a solana public key. Address of SOL is So11111111111111111111111111111111111111112. When using this action, the user is aware that they are transferring SOL and not any other token.",
       "keywords": [
+        "transfer funds",
+        "send money",
+        "send sol",
+        "transfer sol",
         "transfer",
         "send",
         "sol",
@@ -229,8 +240,15 @@
     {
       "name": "transfer-spl",
       "title": "Transfer SPL Token",
-      "description": "Transfer SPL tokens to another wallet address",
+      "description": "This action/tool is used to transfer SPL tokens to another wallet address which is a solana public key. This action also handles the creation of a new token account for the recipient if they don't already have one. When using this action, the user is aware that they are transferring SPL tokens and not SOL.",
       "keywords": [
+        "send tokens",
+        "transfer tokens",
+        "transfer spl token",
+        "transfer spl token to another address",
+        "transfer spl token to another wallet",
+        "transfer spl token to another wallet address",
+        "transfer spl token to another wallet address which is a solana public key",
         "transfer",
         "spl",
         "token",
@@ -241,8 +259,13 @@
     {
       "name": "get-wallet-address",
       "title": "Get Wallet Address",
-      "description": "Get the current wallet address",
+      "description": "This action/tool is used to get the wallet address of the user, which is a solana public key",
       "keywords": [
+        "get wallet address",
+        "show wallet address",
+        "display wallet address",
+        "my wallet address",
+        "my solana wallet address",
         "wallet",
         "address",
         "public key",
@@ -252,8 +275,16 @@
     {
       "name": "get-token-balance",
       "title": "Get Token Balance",
-      "description": "Get the balance of a specific token",
+      "description": "This action/tool is used to check the token balances of a the user's wallet. The response contains the name, symbol, balance and decimals of the token. When using this action, the user is aware that they are checking the token balances of their wallet and not the token balances of a specific token.",
       "keywords": [
+        "check token balances",
+        "get wallet token balances",
+        "view token balances",
+        "show token balances",
+        "check token balance",
+        "get token balance",
+        "view token balance",
+        "show token balance",
         "token",
         "balance",
         "amount",
@@ -263,8 +294,13 @@
     {
       "name": "get-token-data-by-ticker",
       "title": "Get Token Data by Ticker",
-      "description": "Get token information using its ticker symbol",
+      "description": "Get the token data for a given token ticker or symbol",
       "keywords": [
+        "token data by ticker",
+        "fetch token info by ticker",
+        "lookup token ticker info",
+        "get token info by ticker",
+        "get token data by ticker",
         "token",
         "ticker",
         "symbol",
@@ -275,8 +311,10 @@
     {
       "name": "sell-token",
       "title": "Sell Token",
-      "description": "Sell a specific token",
+      "description": "This tool can be used to sell tokens. This sells tokens for SOL. User is aware that they are selling tokens for SOL and don't need to be told that.",
       "keywords": [
+        "sell tokens",
+        "sell sol",
         "sell",
         "token",
         "trade",
@@ -286,8 +324,13 @@
     {
       "name": "fetch-price",
       "title": "Fetch Price",
-      "description": "Get the current price of a token",
+      "description": "Fetch the current price of a Solana token in USDC using Jupiter API",
       "keywords": [
+        "get token price",
+        "check price",
+        "token value",
+        "price check",
+        "get price in usd",
         "price",
         "token",
         "value",
@@ -308,8 +351,16 @@
     {
       "name": "get-trending-tokens",
       "title": "Get Trending Tokens",
-      "description": "Get list of trending tokens",
+      "description": "This action/tool fetches the list of trending tokens on Solana using the Birdeye public API. The response contains the top trending tokens, their stats, price, market cap, and more.",
       "keywords": [
+        "get trending tokens",
+        "fetch trending tokens",
+        "show trending tokens",
+        "trending tokens list",
+        "top tokens",
+        "hot tokens",
+        "popular tokens",
+        "token leaderboard",
         "trending",
         "popular",
         "tokens",
@@ -319,8 +370,16 @@
     {
       "name": "bridge",
       "title": "Bridge Tokens",
-      "description": "Bridge tokens between different chains",
+      "description": "This action/tool generates a URL for bridging a specified amount of tokens to a target chain using the Sendai bridge. The user should visit the generated URL to complete the bridging process.",
       "keywords": [
+        "get bridge url",
+        "bridge tokens",
+        "send tokens cross-chain",
+        "bridge assets",
+        "cross-chain transfer",
+        "bridge to chain",
+        "send to another chain",
+        "bridge amount",
         "bridge",
         "cross-chain",
         "transfer",
@@ -330,8 +389,18 @@
     {
       "name": "onramp",
       "title": "Onramp",
-      "description": "Onramp fiat to crypto",
+      "description": "This action/tool is used to generate a MoonPay onramp URL for purchasing SOL directly to the user's wallet. The user can optionally specify an amount to purchase. The generated URL will redirect to MoonPay's interface where they can complete the purchase using fiat currency.",
       "keywords": [
+        "buy crypto",
+        "buy sol",
+        "buy solana",
+        "onramp",
+        "purchase crypto",
+        "add funds",
+        "fund wallet",
+        "moonpay",
+        "buy tokens",
+        "deposit crypto",
         "onramp",
         "fiat",
         "buy",
@@ -341,8 +410,11 @@
     {
       "name": "lulo-get-apy",
       "title": "Get Lulo APY",
-      "description": "Get APY information from Lulo",
+      "description": "Get current APY rates from Lulo protocol for a given SPL token (defaults to USDC).",
       "keywords": [
+        "get APY from lulo",
+        "what is the lulo APY for USDC?",
+        "fetch lulo APY rates",
         "lulo",
         "apy",
         "yield",
@@ -352,8 +424,13 @@
     {
       "name": "get-sol-price",
       "title": "Get SOL Price",
-      "description": "Get current SOL price",
+      "description": "This action/tool is used to check the current market price of SOL (Solana). The price will be returned in USD unless specified otherwise (though currently only USD is supported). When using this action, the user is aware that they are checking the market price of SOL.",
       "keywords": [
+        "get sol price",
+        "check sol price",
+        "what is sol price",
+        "fetch solana price",
+        "current sol value",
         "sol",
         "price",
         "value",
@@ -363,8 +440,16 @@
     {
       "name": "get-portfolio",
       "title": "Get Portfolio",
-      "description": "Get your token portfolio",
+      "description": "This action/tool is used to fetch the full portfolio of the user's wallet using the Birdeye public API. The response contains all tokens, their balances, and USD values. When using this action, the user is aware that they are checking the entire portfolio of their wallet, not just a specific token or SOL balance.",
       "keywords": [
+        "check portfolio",
+        "get wallet portfolio",
+        "view portfolio",
+        "show portfolio",
+        "portfolio overview",
+        "wallet holdings",
+        "get asset list",
+        "show wallet assets",
         "portfolio",
         "holdings",
         "tokens",
@@ -374,8 +459,14 @@
     {
       "name": "get-top-lst",
       "title": "Get Top LST",
-      "description": "Get top liquid staking tokens",
+      "description": "Fetch the top 10 Liquid Staking Tokens (LSTs) by daily trading volume from Jupiter's token list.",
       "keywords": [
+        "get top LST tokens",
+        "fetch top LSTs",
+        "top liquid staking tokens",
+        "top LSTs by volume",
+        "top 10 LST tokens",
+        "top LST tokens by daily volume",
         "lst",
         "liquid",
         "staking",
@@ -385,8 +476,10 @@
     {
       "name": "sanctum-get-lst-apy",
       "title": "Get Sanctum LST APY",
-      "description": "Get APY information for Sanctum LST",
+      "description": "Fetch the APY of a LST(Liquid Staking Token) on Sanctum with specified mint addresses or symbols",
       "keywords": [
+        "get sanctum LST APY",
+        "fetch sanctum LST APY",
         "sanctum",
         "lst",
         "apy",
@@ -396,8 +489,13 @@
     {
       "name": "rugcheck",
       "title": "Rugcheck",
-      "description": "Check if a token is safe from rug pulls",
+      "description": "Check if a token is a rug pull",
       "keywords": [
+        "check rug pull",
+        "rug pull check",
+        "rug pull detector",
+        "rug pull scanner",
+        "rug pull alert",
         "rug",
         "safety",
         "check",
@@ -407,8 +505,14 @@
     {
       "name": "launch-pump-fun-token",
       "title": "Launch Pump Fun Token",
-      "description": "Launch a new fun token",
+      "description": "Launch a new token on Pump.fun with customizable metadata and initial liquidity",
       "keywords": [
+        "create pumpfun token",
+        "launch token on pumpfun",
+        "deploy pumpfun token",
+        "create meme token",
+        "launch memecoin",
+        "create pump token",
         "launch",
         "token",
         "create",
@@ -429,8 +533,9 @@
     {
       "name": "lulo-lend",
       "title": "Lulo Lend",
-      "description": "Lend tokens through Lulo",
+      "description": "Lend SPL tokens using Lulo protocol",
       "keywords": [
+        "lend USDC with lulo",
         "lulo",
         "lend",
         "loan",
@@ -438,11 +543,14 @@
       ]
     }
   ],
+  "ai": {
+    "instructions": ""
+  },
   "keywords": [
     "chat",
-    "gpt",
-    "openai",
-    "vision"
+    "solana",
+    "solana agent",
+    "send ai"
   ],
   "preferences": [
     {
