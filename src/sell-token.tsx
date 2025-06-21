@@ -1,18 +1,25 @@
-import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
-import { useState } from "react";
+import { ActionPanel, Action, Form, showToast, Toast, LaunchProps } from "@raycast/api";
+import { useEffect, useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
-function SellToken() {
+function SellToken(props: LaunchProps<{ arguments: { inputMint: string; inputAmount: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
 
-  async function handleSubmit(values: { inputMint: string; outputAmount: string }) {
+  useEffect(() => {
+    if (props.arguments.inputMint && props.arguments.inputAmount) {
+      handleSubmit({ inputMint: props.arguments.inputMint, inputAmount: props.arguments.inputAmount });
+    }
+  }, [props.arguments.inputMint, props.arguments.inputAmount]);
+
+  async function handleSubmit(values: { inputMint: string; inputAmount: string }) {
     try {
       setIsLoading(true);
-      const outputAmount = parseFloat(values.outputAmount);
+      const inputAmount = parseFloat(values.inputAmount);
 
-      if (isNaN(outputAmount) || outputAmount <= 0) {
+      if (isNaN(inputAmount) || inputAmount <= 0) {
         await showToast({
           style: Toast.Style.Failure,
           title: "Invalid amount",
@@ -30,10 +37,14 @@ function SellToken() {
         return;
       }
 
-      await executeAction("sell", {
+      const result = await executeAction("sell", {
+        inputAmount: inputAmount,
         inputMint: values.inputMint,
-        outputAmount: outputAmount,
       });
+
+      console.log("result", result);
+
+      setTxHash(result.data?.toString() ?? null);
 
       await showToast({
         style: Toast.Style.Success,
@@ -55,14 +66,27 @@ function SellToken() {
   return (
     <Form
       isLoading={isLoading}
+      searchBarAccessory={
+        txHash ? <Form.LinkAccessory target={`https://solscan.io/tx/${txHash}`} text="View on Solscan" /> : null
+      }
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Sell" onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
-      <Form.TextField id="inputMint" title="Token Address" placeholder="Enter token CA" />
-      <Form.TextField id="outputAmount" title="Amount (in SOL)" placeholder="Enter amount to receive" />
+      <Form.TextField
+        defaultValue={props.arguments.inputMint}
+        id="inputMint"
+        title="Token Address"
+        placeholder="Enter token CA"
+      />
+      <Form.TextField
+        defaultValue={props.arguments.inputAmount}
+        id="inputAmount"
+        title="Amount"
+        placeholder="Enter amount to sell"
+      />
     </Form>
   );
 }

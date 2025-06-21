@@ -1,11 +1,18 @@
-import { ActionPanel, Action, Form, showToast, Toast, LaunchProps } from "@raycast/api";
-import { useState } from "react";
+import { ActionPanel, Action, Form, showToast, Toast, LaunchProps, Detail } from "@raycast/api";
+import { useEffect, useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
 function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmount: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (props.arguments.outputMint && props.arguments.inputAmount) {
+      handleSubmit({ outputMint: props.arguments.outputMint, inputAmount: props.arguments.inputAmount });
+    }
+  }, [props.arguments.outputMint, props.arguments.inputAmount]);
 
   async function handleSubmit(values: { outputMint: string; inputAmount: string }) {
     try {
@@ -24,6 +31,8 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
         outputMint: values.outputMint,
         inputAmount: inputAmount,
       });
+
+      setTxHash(result.data?.toString() ?? null);
 
       await showToast({
         style: Toast.Style.Success,
@@ -45,6 +54,9 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
   return (
     <Form
       isLoading={isLoading}
+      searchBarAccessory={
+        txHash ? <Form.LinkAccessory target={`https://solscan.io/tx/${txHash}`} text="View on Solscan" /> : null
+      }
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Buy" onSubmit={handleSubmit} />
@@ -63,6 +75,7 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
         placeholder="Enter amount to spend"
         defaultValue={props.arguments.inputAmount}
       />
+      {txHash && <Detail markdown={`[View on Solscan](https://solscan.io/tx/${txHash})`} />}
     </Form>
   );
 }
