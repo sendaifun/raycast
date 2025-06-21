@@ -1,4 +1,4 @@
-import { ActionPanel, Action, List, showToast, Toast, CopyToClipboardAction, Icon } from "@raycast/api";
+import { ActionPanel, Action, Detail, showToast, Toast, Icon } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
@@ -29,19 +29,50 @@ function GetWalletAddress() {
     }
   }
 
+  const markdown = `# 🔑 Wallet Address
+
+${
+  isLoading
+    ? `
+## ⏳ Loading...
+Please wait while we fetch your wallet address...
+`
+    : walletAddress
+      ? `
+### Your Wallet Address
+
+####
+
+\`\`\`
+${walletAddress}
+\`\`\`
+
+####
+
+### 💡 Quick Actions
+Use the action panel below to copy your wallet address.
+`
+      : `
+## ❌ Error Loading Address
+Unable to fetch your wallet address. Please try refreshing.
+`
+}
+
+---
+
+*Powered by SendAI*`;
+
   return (
-    <List isLoading={isLoading}>
-      <List.Item
-        title="Wallet Address"
-        subtitle={walletAddress || "Loading..."}
-        actions={
-          <ActionPanel>
-            <Action.CopyToClipboard title="Copy Wallet Address" content={walletAddress} />
-          </ActionPanel>
-        }
-        icon={Icon.CopyClipboard}
-      />
-    </List>
+    <Detail
+      isLoading={isLoading}
+      markdown={markdown}
+      navigationTitle="Wallet Address"
+      actions={
+        <ActionPanel>
+          <Action.CopyToClipboard title="Copy Wallet Address" content={walletAddress} icon={Icon.CopyClipboard} />
+        </ActionPanel>
+      }
+    />
   );
 }
 

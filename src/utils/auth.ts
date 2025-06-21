@@ -115,6 +115,5 @@ async function fetchBackendToken(googleIdToken: string): Promise<string> {
     throw new Error("Error fetching Send AI token");
   }
   await LocalStorage.setItem(STORAGE_KEYS.BACKEND_SESSION_TOKEN, data.token);
-  console.log("backend token", data.token);
   return data.token;
 }

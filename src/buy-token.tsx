@@ -1,10 +1,10 @@
-import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Form, showToast, Toast, LaunchProps } from "@raycast/api";
 import { useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
-function BuyToken() {
+function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmount: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(values: { outputMint: string; inputAmount: string }) {
@@ -51,8 +51,18 @@ function BuyToken() {
         </ActionPanel>
       }
     >
-      <Form.TextField id="outputMint" title="Token Address" placeholder="Enter token CA" />
-      <Form.TextField id="inputAmount" title="Amount (in SOL)" placeholder="Enter amount to spend" />
+      <Form.TextField
+        id="outputMint"
+        title="Token Address"
+        placeholder="Enter token CA"
+        defaultValue={props.arguments.outputMint}
+      />
+      <Form.TextField
+        id="inputAmount"
+        title="Amount (in SOL)"
+        placeholder="Enter amount to spend"
+        defaultValue={props.arguments.inputAmount}
+      />
     </Form>
   );
 }

@@ -1,4 +1,4 @@
-import { ActionPanel, Action, List, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Detail, showToast, Toast } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
@@ -6,7 +6,7 @@ import { withAccessToken } from "@raycast/utils";
 
 function Balance() {
   const [isLoading, setIsLoading] = useState(true);
-  const [balance, setBalance] = useState<string>("");
+  const [balance, setBalance] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     loadBalance();
@@ -16,7 +16,8 @@ function Balance() {
     try {
       setIsLoading(true);
       const result = await executeAction("getSolBalance");
-      setBalance(result.toString());
+      console.log("result", result);
+      setBalance(result.data?.toString());
     } catch (error) {
       console.error(error);
       await showToast({
@@ -29,18 +30,64 @@ function Balance() {
     }
   }
 
+  const markdown = `# 💰 Wallet Balance
+
+${
+  isLoading
+    ? `
+## ⏳ Loading...
+Please wait while we fetch your current balance...
+`
+    : balance
+      ? `
+### 🟢 Current Balance: **${balance} SOL**
+
+---
+
+### 📊 Balance Details
+- **Network**: Solana
+- **Currency**: SOL (Solana)
+- **Last Updated**: ${new Date().toLocaleString()}
+
+---
+
+### 💡 Quick Actions
+Use the action panel below to refresh your balance or perform other wallet operations.
+`
+      : `
+## ❌ Error Loading Balance
+Unable to fetch your wallet balance. Please try refreshing.
+`
+}
+
+---
+
+*Powered by SendAI*`;
+
   return (
-    <List isLoading={isLoading}>
-      <List.Item
-        title="Wallet Balance"
-        subtitle={balance ? `${balance} SOL` : "Loading..."}
-        actions={
-          <ActionPanel>
-            <Action title="Refresh" onAction={loadBalance} />
-          </ActionPanel>
-        }
-      />
-    </List>
+    <Detail
+      isLoading={isLoading}
+      markdown={markdown}
+      actions={
+        <ActionPanel>
+          <Action title="Refresh Balance" onAction={loadBalance} icon="🔄" />
+          <Action
+            title="Copy Balance"
+            onAction={() => {
+              if (balance) {
+                // Copy to clipboard functionality would go here
+                showToast({
+                  style: Toast.Style.Success,
+                  title: "Copied!",
+                  message: `${balance} SOL copied to clipboard`,
+                });
+              }
+            }}
+            icon="📋"
+          />
+        </ActionPanel>
+      }
+    />
   );
 }
 

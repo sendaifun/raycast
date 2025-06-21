@@ -7,8 +7,8 @@ export default withAccessToken(provider)(async ({ to, amount, mint }: { to: stri
     console.log("transferring SPL token", to, amount, mint);
     const result = await executeAction("transferSPL", {
       to: to,
-      amount: parseFloat(amount),
       mint: mint,
+      amount: parseFloat(amount),
     });
     return {
       status: "success",

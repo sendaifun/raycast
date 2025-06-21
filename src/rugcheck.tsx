@@ -1,13 +1,64 @@
-import { ActionPanel, Action, Form, showToast, Toast, List } from "@raycast/api";
-import { useState } from "react";
+import { ActionPanel, Action, showToast, Toast, Detail, LaunchProps } from "@raycast/api";
+import { useEffect, useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
-function Rugcheck() {
+interface RugcheckResult {
+  status: string;
+  data: {
+    tokenProgram: string;
+    tokenType: string;
+    risks: string[];
+    score: string;
+    score_normalised: number;
+  };
+}
+
+function getMarkdown(rugcheckResult: RugcheckResult, tokenAddress: string): string {
+  const { data } = rugcheckResult;
+  const scoreColor = data.score === "safe" ? "🟢" : data.score === "warning" ? "🟡" : "🔴";
+
+  const risksList = data.risks.length > 0 ? data.risks.map((risk) => `- ${risk}`).join("\n") : "No risks detected";
+
+  return `# Rugcheck Result
+
+## Token Address
+\`${tokenAddress}\`
+
+---
+
+## Safety Assessment
+${scoreColor} ${data.score}
+
+**Normalized Score:** ${data.score_normalised}/1
+
+---
+
+## Token Details
+**Token Program:** \`${data.tokenProgram}\`
+
+**Token Type:** ${data.tokenType || "Not specified"}
+
+## Risks
+${risksList}
+
+---
+
+*Analysis completed at ${new Date().toLocaleString()}*`;
+}
+
+function Rugcheck(props: LaunchProps<{ arguments: { tokenAddress: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
-  const [rugcheckResult, setRugcheckResult] = useState<string>("");
+  const [rugcheckResult, setRugcheckResult] = useState<RugcheckResult | null>(null);
   const [tokenAddress, setTokenAddress] = useState<string>("");
+
+  useEffect(() => {
+    if (props.arguments.tokenAddress) {
+      setTokenAddress(props.arguments.tokenAddress);
+      handleSubmit({ tokenAddress: props.arguments.tokenAddress });
+    }
+  }, [props.arguments.tokenAddress]);
 
   async function handleSubmit(values: { tokenAddress: string }) {
     try {
@@ -27,7 +78,7 @@ function Rugcheck() {
         tokenAddress: values.tokenAddress,
       });
 
-      setRugcheckResult(String(result));
+      setRugcheckResult(result as RugcheckResult);
     } catch (error) {
       console.error(error);
       await showToast({
@@ -40,34 +91,33 @@ function Rugcheck() {
     }
   }
 
-  return (
-    <List isLoading={isLoading}>
-      <List.Item
-        title="Rugcheck Token"
-        subtitle="Check if a token is safe from rug pulls"
+  if (isLoading) {
+    return <Detail markdown="Loading..." isLoading={isLoading} />;
+  }
+
+  if (!rugcheckResult) {
+    return (
+      <Detail
+        markdown="### Rugcheck\n\nEnter a token address as an argument to check if the token is safe from rug pulls."
         actions={
           <ActionPanel>
-            <Action.Push
-              title="Enter Token Address"
-              target={
-                <Form
-                  actions={
-                    <ActionPanel>
-                      <Action.SubmitForm title="Check Safety" onSubmit={handleSubmit} />
-                    </ActionPanel>
-                  }
-                >
-                  <Form.TextField id="tokenAddress" title="Token Address" placeholder="Enter token address" />
-                </Form>
-              }
-            />
+            <Action title="Refresh" onAction={() => tokenAddress && handleSubmit({ tokenAddress })} />
           </ActionPanel>
         }
       />
-      {rugcheckResult && (
-        <List.Item title="Rugcheck Result" subtitle={rugcheckResult} accessories={[{ text: tokenAddress }]} />
-      )}
-    </List>
+    );
+  }
+
+  return (
+    <Detail
+      isLoading={isLoading}
+      markdown={getMarkdown(rugcheckResult, tokenAddress)}
+      actions={
+        <ActionPanel>
+          <Action title="Refresh" onAction={() => handleSubmit({ tokenAddress })} />
+        </ActionPanel>
+      }
+    />
   );
 }
 

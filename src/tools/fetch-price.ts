@@ -1,12 +1,13 @@
 import { withAccessToken } from "@raycast/utils";
 import { executeAction } from "../shared/api-wrapper";
 import { provider } from "../utils/auth";
+import { PublicKey } from "@solana/web3.js";
 
 export default withAccessToken(provider)(async ({ tokenId }: { tokenId: string }) => {
   try {
     console.log("fetching price for token", tokenId);
     const result = await executeAction("fetchPrice", {
-      tokenId: tokenId,
+      tokenId: new PublicKey(tokenId),
     });
     return {
       status: "success",

@@ -2,6 +2,7 @@ import axios from "axios";
 import { URL_ENDPOINTS } from "../constants/endpoints";
 import { LocalStorage } from "@raycast/api";
 import { STORAGE_KEYS } from "../utils/constants";
+import { PublicKey } from "@solana/web3.js";
 
 export interface ApiResponse<T = unknown> {
   status: "success" | "error";
@@ -10,7 +11,7 @@ export interface ApiResponse<T = unknown> {
 }
 
 export interface ApiParams {
-  [key: string]: string | number | string[];
+  [key: string]: string | number | string[] | PublicKey;
 }
 
 export async function executeAction<T>(method: string, params: ApiParams = {}): Promise<ApiResponse<T>> {
@@ -29,7 +30,6 @@ export async function executeAction<T>(method: string, params: ApiParams = {}): 
         },
       },
     );
-    console.log("response", response.data);
     return response.data;
   } catch (error) {
     return {

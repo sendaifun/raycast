@@ -19,7 +19,23 @@
       "title": "Buy Token",
       "subtitle": "Send AI Agent",
       "description": "Buy a token",
-      "mode": "view"
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "outputMint",
+          "type": "text",
+          "title": "Token Address",
+          "placeholder": "Enter token CA",
+          "required": false
+        },
+        {
+          "name": "inputAmount",
+          "type": "text",
+          "title": "Amount (in SOL)",
+          "placeholder": "Enter amount in SOL",
+          "required": false
+        }
+      ]
     },
     {
       "name": "auth",
@@ -36,13 +52,6 @@
       "mode": "view"
     },
     {
-      "name": "history",
-      "title": "History",
-      "subtitle": "Solana Agent",
-      "description": "Collection of your recent answer",
-      "mode": "view"
-    },
-    {
       "name": "balance",
       "title": "Balance",
       "subtitle": "Send AI Agent",
@@ -50,17 +59,10 @@
       "mode": "view"
     },
     {
-      "name": "transfer",
-      "title": "Transfer SOL",
-      "subtitle": "Send AI Agent",
-      "description": "Transfer SOL to another wallet address",
-      "mode": "view"
-    },
-    {
       "name": "transfer-spl",
       "title": "Transfer SPL Token",
       "subtitle": "Send AI Agent",
-      "description": "Transfer SPL tokens to another wallet address",
+      "description": "Transfer SPL tokens to another wallet address. If user mentions the token address then use that address to transfer the token, if user mentions the token ticker then get the token info of that ticker and then transfer the token",
       "mode": "view"
     },
     {
@@ -68,20 +70,6 @@
       "title": "Get Wallet Address",
       "subtitle": "Send AI Agent",
       "description": "Get the current wallet address",
-      "mode": "view"
-    },
-    {
-      "name": "get-token-balance",
-      "title": "Get Token Balance",
-      "subtitle": "Send AI Agent",
-      "description": "Get the balance of a specific token",
-      "mode": "view"
-    },
-    {
-      "name": "get-token-data-by-ticker",
-      "title": "Get Token Data by Ticker",
-      "subtitle": "Send AI Agent",
-      "description": "Get token information using its ticker symbol",
       "mode": "view"
     },
     {
@@ -96,48 +84,38 @@
       "title": "Fetch Price",
       "subtitle": "Send AI Agent",
       "description": "Get the current price of a token",
-      "mode": "view"
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "caOrTicker",
+          "type": "text",
+          "title": "Token Address or Ticker",
+          "placeholder": "Enter token CA or ticker",
+          "required": true
+        }
+      ]
     },
     {
-      "name": "get-token",
-      "title": "Get Token",
+      "name": "get-token-overview",
+      "title": "Get Token Overview",
       "subtitle": "Send AI Agent",
       "description": "Get information about a specific token",
-      "mode": "view"
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "tokenAddress",
+          "type": "text",
+          "title": "Token Address",
+          "placeholder": "Enter token CA or ticker",
+          "required": true
+        }
+      ]
     },
     {
       "name": "get-trending-tokens",
       "title": "Get Trending Tokens",
       "subtitle": "Send AI Agent",
       "description": "Get list of trending tokens",
-      "mode": "view"
-    },
-    {
-      "name": "bridge",
-      "title": "Bridge Tokens",
-      "subtitle": "Send AI Agent",
-      "description": "Bridge tokens between different chains",
-      "mode": "view"
-    },
-    {
-      "name": "onramp",
-      "title": "Onramp",
-      "subtitle": "Send AI Agent",
-      "description": "Onramp fiat to crypto",
-      "mode": "view"
-    },
-    {
-      "name": "lulo-get-apy",
-      "title": "Get Lulo APY",
-      "subtitle": "Send AI Agent",
-      "description": "Get APY information from Lulo",
-      "mode": "view"
-    },
-    {
-      "name": "get-sol-price",
-      "title": "Get SOL Price",
-      "subtitle": "Send AI Agent",
-      "description": "Get current SOL price",
       "mode": "view"
     },
     {
@@ -148,46 +126,20 @@
       "mode": "view"
     },
     {
-      "name": "get-top-lst",
-      "title": "Get Top LST",
-      "subtitle": "Send AI Agent",
-      "description": "Get top liquid staking tokens",
-      "mode": "view"
-    },
-    {
-      "name": "sanctum-get-lst-apy",
-      "title": "Get Sanctum LST APY",
-      "subtitle": "Send AI Agent",
-      "description": "Get APY information for Sanctum LST",
-      "mode": "view"
-    },
-    {
       "name": "rugcheck",
       "title": "Rugcheck",
       "subtitle": "Send AI Agent",
       "description": "Check if a token is safe from rug pulls",
-      "mode": "view"
-    },
-    {
-      "name": "launch-pump-fun-token",
-      "title": "Launch Pump Fun Token",
-      "subtitle": "Send AI Agent",
-      "description": "Launch a new fun token",
-      "mode": "view"
-    },
-    {
-      "name": "get-sol-balance",
-      "title": "Get SOL Balance",
-      "subtitle": "Send AI Agent",
-      "description": "Get your SOL balance",
-      "mode": "view"
-    },
-    {
-      "name": "lulo-lend",
-      "title": "Lulo Lend",
-      "subtitle": "Send AI Agent",
-      "description": "Lend tokens through Lulo",
-      "mode": "view"
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "tokenAddress",
+          "type": "text",
+          "title": "Token Address",
+          "placeholder": "Enter token address",
+          "required": true
+        }
+      ]
     }
   ],
   "tools": [
@@ -210,7 +162,7 @@
     {
       "name": "buy-token",
       "title": "Buy Token",
-      "description": "This tool can be used to buy tokens. This buys tokens using SOL. User is aware that they are buying tokens using SOL and don't need to be told that. this function acess token address and not the ticker if ticker is given then get the token info of that ticker and then buy the token",
+      "description": "This tool can be used to buy tokens. This buys tokens using SOL. User is aware that they are buying tokens using SOL and don't need to be told that. this function acess token address and not the ticker if ticker is given then get the token info of that ticker and then buy the token. This function takes input amount in sol and not in usdc",
       "keywords": [
         "buy tokens",
         "buy sol",
@@ -324,7 +276,7 @@
     {
       "name": "fetch-price",
       "title": "Fetch Price",
-      "description": "Fetch the current price of a Solana token in USDC using Jupiter API",
+      "description": "Fetch the current price of a Solana token in USDC using Jupiter API. This function takes token address as input and returns the price of the token in USDC.",
       "keywords": [
         "get token price",
         "check price",
@@ -339,7 +291,7 @@
     },
     {
       "name": "get-token",
-      "title": "Get Token",
+      "title": "Get Token Overview",
       "description": "Get information about a specific token",
       "keywords": [
         "token",
@@ -419,22 +371,6 @@
         "apy",
         "yield",
         "interest"
-      ]
-    },
-    {
-      "name": "get-sol-price",
-      "title": "Get SOL Price",
-      "description": "This action/tool is used to check the current market price of SOL (Solana). The price will be returned in USD unless specified otherwise (though currently only USD is supported). When using this action, the user is aware that they are checking the market price of SOL.",
-      "keywords": [
-        "get sol price",
-        "check sol price",
-        "what is sol price",
-        "fetch solana price",
-        "current sol value",
-        "sol",
-        "price",
-        "value",
-        "market"
       ]
     },
     {
@@ -544,7 +480,7 @@
     }
   ],
   "ai": {
-    "instructions": "if asked to buy or sell tokens, then do a deep think, check if user is asking to buy which token, is it a token address or a ticker, if ticker then get token info of that ticker and then buy the token, only call getTrendingToken if user explicitly mentions about it don't call it if user mentions the token name, if user mentions the number of tokens to be bought then first fetch the price of token calculate the input amount in sol and then pass it to buy or sell token function"
+    "instructions": "if asked to buy or sell tokens, then do a deep think, check if user is asking to buy which token, is it a token address (token address is usually 44 or more characters long) or a ticker (ticker is usually 3-8 characters long), if ticker then get token info of that ticker then fetch the price of token in usdc and then find how many sol is required for that usdc amount and then buy the token, if user mentions the number of tokens to be bought then first fetch the price of token calculate the input amount in sol and then pass it to buy or sell token function if user mentions input amount in sol then pass it to buy or sell token function directly"
   },
   "keywords": [
     "chat",

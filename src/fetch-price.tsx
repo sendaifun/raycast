@@ -1,33 +1,69 @@
-import { ActionPanel, Action, Form, showToast, Toast, List } from "@raycast/api";
-import { useState } from "react";
+import { ActionPanel, Action, showToast, Toast, Detail, LaunchProps } from "@raycast/api";
+import { useEffect, useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
+import { isTokenAddress } from "./utils/isCA";
 
-function FetchPrice() {
+function formatPrice(price: number): string {
+  return price < 0.01 ? price.toFixed(8) : price.toFixed(4);
+}
+
+function getMarkdown(price: number, tokenAddress: string): string {
+  return `# Token Price
+
+**Current Price:** $${formatPrice(price)}
+
+**Token:** \`${tokenAddress}\`
+
+---
+
+*Last updated: ${new Date().toLocaleString()}*`;
+}
+
+function FetchPrice(props: LaunchProps<{ arguments: { caOrTicker: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
-  const [price, setPrice] = useState<string>("");
-  const [tokenAddress, setTokenAddress] = useState<string>("");
+  const [price, setPrice] = useState<number | null>(null);
+  const [tokenAddressOrTicker, setTokenAddressOrTicker] = useState<string>("");
 
-  async function handleSubmit(values: { tokenAddress: string }) {
+  useEffect(() => {
+    if (props.arguments.caOrTicker) {
+      setTokenAddressOrTicker(props.arguments.caOrTicker);
+      handleSubmit({ tokenAddressOrTicker: props.arguments.caOrTicker });
+    }
+  }, [props.arguments.caOrTicker]);
+
+  async function handleSubmit(values: { tokenAddressOrTicker: string }) {
     try {
       setIsLoading(true);
-      setTokenAddress(values.tokenAddress);
+      setTokenAddressOrTicker(values.tokenAddressOrTicker);
 
-      if (!values.tokenAddress || values.tokenAddress.trim() === "") {
+      console.log("values", values);
+
+      if (!values.tokenAddressOrTicker || values.tokenAddressOrTicker.trim() === "") {
         await showToast({
           style: Toast.Style.Failure,
           title: "Invalid token address",
-          message: "Please enter a valid token address",
+          message: "Please enter a valid token address or ticker",
         });
         return;
       }
 
-      const result = await executeAction("fetchPrice", {
-        tokenAddress: values.tokenAddress,
-      });
-
-      setPrice(String(result));
+      if (!isTokenAddress(values.tokenAddressOrTicker)) {
+        const tokenData = (await executeAction("getTokenDataByTicker", {
+          ticker: values.tokenAddressOrTicker,
+        })) as { data: { address: string } };
+        const tokenAddr = tokenData.data.address;
+        const result = (await executeAction("fetchPrice", {
+          tokenId: tokenAddr,
+        })) as { data: number };
+        setPrice(Number(result.data));
+      } else {
+        const result = await executeAction("fetchPrice", {
+          tokenId: values.tokenAddressOrTicker,
+        });
+        setPrice(Number(result.data));
+      }
     } catch (error) {
       console.error(error);
       await showToast({
@@ -40,23 +76,33 @@ function FetchPrice() {
     }
   }
 
-  return (
-    <>
-      <List isLoading={isLoading}>
-        <List.Item title="Fetch Token Price" subtitle="Enter token address to get current price" />
+  if (isLoading) {
+    return <Detail markdown="Loading..." isLoading={isLoading} />;
+  }
 
-        {price && <List.Item title="Token Price" subtitle={price} accessories={[{ text: tokenAddress }]} />}
-      </List>
-      <Form
+  if (!price) {
+    return (
+      <Detail
+        markdown="### error fetching price enter correct token address or ticker as an argument to fetch the current price."
         actions={
           <ActionPanel>
-            <Action.SubmitForm title="Fetch Price" onSubmit={handleSubmit} />
+            <Action title="Refresh" onAction={() => handleSubmit({ tokenAddressOrTicker: tokenAddressOrTicker })} />
           </ActionPanel>
         }
-      >
-        <Form.TextField id="tokenAddress" title="Token Address" placeholder="Enter token address" />
-      </Form>
-    </>
+      />
+    );
+  }
+
+  return (
+    <Detail
+      isLoading={isLoading}
+      markdown={getMarkdown(price, tokenAddressOrTicker)}
+      actions={
+        <ActionPanel>
+          <Action title="Refresh" onAction={() => handleSubmit({ tokenAddressOrTicker: tokenAddressOrTicker })} />
+        </ActionPanel>
+      }
+    />
   );
 }
 

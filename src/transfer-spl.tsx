@@ -1,11 +1,60 @@
 import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
+interface PortfolioToken {
+  address: string;
+  decimals: number;
+  balance: number;
+  uiAmount: number;
+  chainId: string;
+  name: string;
+  symbol: string;
+  icon?: string;
+  logoURI?: string;
+  priceUsd: number;
+  valueUsd: number;
+}
+
 function TransferSPL() {
   const [isLoading, setIsLoading] = useState(false);
+  const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
+  const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(true);
+
+  useEffect(() => {
+    loadPortfolio();
+  }, []);
+
+  async function loadPortfolio() {
+    try {
+      setIsLoadingPortfolio(true);
+      const result = await executeAction("getPortfolio");
+      const portfolioResult = result as { data: { items: PortfolioToken[] } };
+
+      if (
+        portfolioResult &&
+        portfolioResult.data &&
+        portfolioResult.data.items &&
+        Array.isArray(portfolioResult.data.items)
+      ) {
+        setPortfolioTokens(portfolioResult.data.items);
+      } else {
+        setPortfolioTokens([]);
+      }
+    } catch (error) {
+      console.error("Error loading portfolio:", error);
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Error",
+        message: "Failed to load portfolio data",
+      });
+      setPortfolioTokens([]);
+    } finally {
+      setIsLoadingPortfolio(false);
+    }
+  }
 
   async function handleSubmit(values: { to: string; mintAddress: string; amount: string }) {
     try {
@@ -33,18 +82,24 @@ function TransferSPL() {
       if (!values.mintAddress || values.mintAddress.trim() === "") {
         await showToast({
           style: Toast.Style.Failure,
-          title: "Invalid token address",
-          message: "Please enter a valid token mint address",
+          title: "Invalid token",
+          message: "Please select a token from your portfolio",
         });
         return;
       }
-
-      await executeAction("transferSpl", {
+      const result = await executeAction("transferSPL", {
         to: values.to,
-        mintAddress: values.mintAddress,
         amount: amount,
+        mintAddress: values.mintAddress,
       });
-
+      if (result.status === "error") {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Error",
+          message: result.message,
+        });
+        return;
+      }
       await showToast({
         style: Toast.Style.Success,
         title: "Success",
@@ -64,15 +119,29 @@ function TransferSPL() {
 
   return (
     <Form
-      isLoading={isLoading}
+      isLoading={isLoading || isLoadingPortfolio}
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Transfer SPL" onSubmit={handleSubmit} />
+          <Action title="Refresh Portfolio" onAction={loadPortfolio} />
         </ActionPanel>
       }
     >
       <Form.TextField id="to" title="To Address" placeholder="Enter wallet address" />
-      <Form.TextField id="mintAddress" title="Token Mint Address" placeholder="Enter token mint address" />
+      <Form.Dropdown
+        id="mintAddress"
+        title="Token"
+        placeholder="Select token from portfolio"
+        isLoading={isLoadingPortfolio}
+      >
+        {portfolioTokens.map((token) => (
+          <Form.Dropdown.Item
+            key={token.address}
+            value={token.address}
+            title={`${token.symbol} (Balance: ${token.uiAmount.toFixed(4)})`}
+          />
+        ))}
+      </Form.Dropdown>
       <Form.TextField id="amount" title="Amount" placeholder="Enter amount to transfer" />
     </Form>
   );
