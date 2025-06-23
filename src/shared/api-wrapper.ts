@@ -30,11 +30,31 @@ export async function executeAction<T>(method: string, params: ApiParams = {}): 
         },
       },
     );
+
+    // If the response indicates an error, throw it so it can be caught by components
+    if (response.data.status === "error") {
+      throw new Error(response.data.message || "API request failed");
+    }
+
     return response.data;
   } catch (error) {
-    return {
-      status: "error",
-      message: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+    console.error(error);
+
+    // Handle axios errors which contain backend response
+    if (axios.isAxiosError(error) && error.response?.data) {
+      const backendError = error.response.data;
+      console.log(backendError);
+      // If backend sent an error response, use its message
+      if (backendError.status === "error" && backendError.message) {
+        throw new Error(backendError.message);
+      }
+      // If backend sent a different error format, try to extract message
+      if (backendError.message) {
+        throw new Error(backendError.message);
+      }
+    }
+
+    // create a new Error with a generic message
+    throw new Error("Unknown error occurred");
   }
 }

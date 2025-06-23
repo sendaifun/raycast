@@ -42,8 +42,6 @@ function SellToken(props: LaunchProps<{ arguments: { inputMint: string; inputAmo
         inputMint: values.inputMint,
       });
 
-      console.log("result", result);
-
       setTxHash(result.data?.toString() ?? null);
 
       await showToast({
@@ -51,13 +49,14 @@ function SellToken(props: LaunchProps<{ arguments: { inputMint: string; inputAmo
         title: "Success",
         message: `Token sale executed successfully`,
       });
+      return;
     } catch (error) {
-      console.error(error);
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to execute token sale",
+        message: error instanceof Error ? error.message : "Failed to execute token sale",
       });
+      return;
     } finally {
       setIsLoading(false);
     }

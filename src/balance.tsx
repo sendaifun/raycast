@@ -23,7 +23,7 @@ function Balance() {
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to load balance",
+        message: error instanceof Error ? error.message : "Failed to load balance",
       });
     } finally {
       setIsLoading(false);

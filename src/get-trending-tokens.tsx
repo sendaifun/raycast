@@ -1,8 +1,9 @@
-import { ActionPanel, Action, List, showToast, Toast, Detail } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, Image } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
+import BuyToken from "./buy-token";
 
 interface Token {
   address: string;
@@ -22,13 +23,13 @@ interface Token {
 
 function formatNumber(num: number): string {
   if (num >= 1e9) {
-    return (num / 1e9).toFixed(2) + "B";
+    return (num / 1e9)?.toFixed(2) + "B";
   } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(2) + "M";
+    return (num / 1e6)?.toFixed(2) + "M";
   } else if (num >= 1e3) {
-    return (num / 1e3).toFixed(2) + "K";
+    return (num / 1e3)?.toFixed(2) + "K";
   }
-  return num.toFixed(2);
+  return num?.toFixed(2) ?? "0";
 }
 
 function formatPrice(price: number): string {
@@ -36,43 +37,45 @@ function formatPrice(price: number): string {
 }
 
 function getMarkDown(selectedToken: Token) {
-  return `# ${selectedToken.name} (${selectedToken.symbol})
+  return `## ${selectedToken.name} (${selectedToken.symbol})
 
-## Token Details
-
-**Address:** \`${selectedToken.address}\`
-
-**Rank:** #${selectedToken.rank}
-
-**Price:** $${formatPrice(selectedToken.price)}
-
-**Market Cap:** $${formatNumber(selectedToken.marketcap)}
-
-**FDV:** $${formatNumber(selectedToken.fdv)}
-
-**Liquidity:** $${formatNumber(selectedToken.liquidity)}
-
-## 24h Statistics
-
-**Volume:** $${formatNumber(selectedToken.volume24hUSD)}
-
-**Volume Change:** ${selectedToken.volume24hChangePercent > 0 ? "+" : ""}${selectedToken.volume24hChangePercent.toFixed(2)}%
-
-**Price Change:** ${selectedToken.price24hChangePercent > 0 ? "+" : ""}${selectedToken.price24hChangePercent.toFixed(2)}%
-
-## Technical Info
-
-**Decimals:** ${selectedToken.decimals}
-
-### Logo:
+ \`${selectedToken.address}\`
 
 ![${selectedToken.name}](${selectedToken.logoURI})`;
 }
 
-function GetTrendingTokens() {
+const TokenDetailMetadata = ({ token }: { token: Token }) => {
+  return (
+    <List.Item.Detail.Metadata>
+      <List.Item.Detail.Metadata.Label title="Rank" text={`#${token.rank}`} />
+      <List.Item.Detail.Metadata.Label title="Address" text={token.address} />
+      <List.Item.Detail.Metadata.Label title="Symbol" text={token.symbol} />
+      <List.Item.Detail.Metadata.Separator />
+      <List.Item.Detail.Metadata.Label title="Price" text={`$${formatPrice(token.price)}`} />
+      <List.Item.Detail.Metadata.Separator />
+      <List.Item.Detail.Metadata.Label title="Market Cap" text={`$${formatNumber(token.marketcap)}`} />
+      <List.Item.Detail.Metadata.Label title="FDV" text={`$${formatNumber(token.fdv)}`} />
+      <List.Item.Detail.Metadata.Label title="Liquidity" text={`$${formatNumber(token.liquidity)}`} />
+      <List.Item.Detail.Metadata.Separator />
+      <List.Item.Detail.Metadata.Label title="24h Volume" text={`$${formatNumber(token.volume24hUSD)}`} />
+      <List.Item.Detail.Metadata.Label
+        title="Volume Change"
+        text={`${token.volume24hChangePercent > 0 ? "+" : ""}${token.volume24hChangePercent?.toFixed(2)}%`}
+      />
+      <List.Item.Detail.Metadata.Label
+        title="Price Change"
+        text={`${token.price24hChangePercent > 0 ? "+" : ""}${token.price24hChangePercent?.toFixed(2)}%`}
+      />
+      <List.Item.Detail.Metadata.Separator />
+      <List.Item.Detail.Metadata.Label title="Decimals" text={`${token.decimals}`} />
+    </List.Item.Detail.Metadata>
+  );
+};
+
+const GetTrendingTokens = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [tokens, setTokens] = useState<Token[]>([]);
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [buyingToken, setBuyingToken] = useState<Token | null>(null);
 
   useEffect(() => {
     loadTrendingTokens();
@@ -95,35 +98,22 @@ function GetTrendingTokens() {
     }
   }
 
-  if (selectedToken) {
-    return (
-      <Detail
-        markdown={getMarkDown(selectedToken)}
-        actions={
-          <ActionPanel>
-            <Action title="Back to List" onAction={() => setSelectedToken(null)} />
-            <Action title="Refresh" onAction={loadTrendingTokens} />
-          </ActionPanel>
-        }
-      />
-    );
+  if (buyingToken) {
+    return <BuyToken arguments={{ outputMint: buyingToken.address, inputAmount: "1" }} />;
   }
+
   return (
-    <List isLoading={isLoading}>
+    <List isLoading={isLoading} isShowingDetail>
       {tokens.map((token) => (
         <List.Item
           key={token.address}
           title={token.name}
-          subtitle={`$${formatNumber(token.volume24hUSD)}`}
-          accessories={[
-            { text: `$${formatPrice(token.price)}` },
-            { text: `${token.price24hChangePercent > 0 ? "+" : ""}${token.price24hChangePercent.toFixed(1)}%` },
-            { text: `#${token.rank}` },
-          ]}
-          icon={token.logoURI}
+          detail={<List.Item.Detail metadata={<TokenDetailMetadata token={token} />} markdown={getMarkDown(token)} />}
+          accessories={[{ text: `#${token.rank}` }]}
+          icon={{ source: token.logoURI, mask: Image.Mask.RoundedRectangle }}
           actions={
             <ActionPanel>
-              <Action title="View Details" onAction={() => setSelectedToken(token)} />
+              <Action title="Buy" onAction={() => setBuyingToken(token)} />
               <Action title="Refresh" onAction={loadTrendingTokens} />
             </ActionPanel>
           }
@@ -131,6 +121,6 @@ function GetTrendingTokens() {
       ))}
     </List>
   );
-}
+};
 
 export default withAccessToken(provider)(GetTrendingTokens);

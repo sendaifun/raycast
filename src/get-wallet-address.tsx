@@ -22,7 +22,7 @@ function GetWalletAddress() {
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to load wallet address",
+        message: error instanceof Error ? error.message : "Failed to load wallet address",
       });
     } finally {
       setIsLoading(false);

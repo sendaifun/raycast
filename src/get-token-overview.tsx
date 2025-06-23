@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
-import { isTokenAddress } from "./utils/isCA";
+import { isValidSolanaAddress } from "./utils/is-valid-address";
 
 interface TokenInfo {
   name: string;
@@ -107,7 +107,7 @@ function GetTokenOverview(props: LaunchProps<{ arguments: { tokenAddress: string
         return;
       }
 
-      if (isTokenAddress(values.tokenAddress)) {
+      if (isValidSolanaAddress(values.tokenAddress)) {
         const result = await executeAction("getToken", {
           tokenId: values.tokenAddress,
         });

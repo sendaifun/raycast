@@ -82,11 +82,10 @@ function GetPortfolio() {
       const portfolioResult = result as { data: PortfolioData };
       setPortfolio(portfolioResult.data);
     } catch (error) {
-      console.error(error);
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to load portfolio",
+        message: error instanceof Error ? error.message : "Failed to load portfolio",
       });
     } finally {
       setIsLoading(false);

@@ -87,11 +87,13 @@ function TransferSPL() {
         });
         return;
       }
+
       const result = await executeAction("transferSPL", {
         to: values.to,
         amount: amount,
         mintAddress: values.mintAddress,
       });
+
       if (result.status === "error") {
         await showToast({
           style: Toast.Style.Failure,
@@ -106,11 +108,10 @@ function TransferSPL() {
         message: `SPL token transfer executed successfully`,
       });
     } catch (error) {
-      console.error(error);
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to execute SPL token transfer",
+        message: error instanceof Error ? error.message : "Failed to execute SPL token transfer",
       });
     } finally {
       setIsLoading(false);

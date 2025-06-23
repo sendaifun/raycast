@@ -84,7 +84,7 @@ function Rugcheck(props: LaunchProps<{ arguments: { tokenAddress: string } }>) {
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to perform rugcheck",
+        message: error instanceof Error ? error.message : "Failed to perform rugcheck",
       });
     } finally {
       setIsLoading(false);

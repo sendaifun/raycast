@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { executeAction } from "./shared/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
+import { isValidSolanaAddress } from "./utils/is-valid-address";
 
 function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmount: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,13 +11,14 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
 
   useEffect(() => {
     if (props.arguments.outputMint && props.arguments.inputAmount) {
-      handleSubmit({ outputMint: props.arguments.outputMint, inputAmount: props.arguments.inputAmount });
+      // handleSubmit({ outputMint: props.arguments.outputMint, inputAmount: props.arguments.inputAmount });
     }
   }, [props.arguments.outputMint, props.arguments.inputAmount]);
 
   async function handleSubmit(values: { outputMint: string; inputAmount: string }) {
     try {
       setIsLoading(true);
+
       const inputAmount = parseFloat(values.inputAmount);
 
       if (isNaN(inputAmount) || inputAmount <= 0) {
@@ -27,6 +29,16 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
         });
         return;
       }
+
+      if (!isValidSolanaAddress(values.outputMint)) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Invalid token",
+          message: "Please enter a valid token address",
+        });
+        return;
+      }
+
       const result = await executeAction("buy", {
         outputMint: values.outputMint,
         inputAmount: inputAmount,
@@ -39,13 +51,14 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
         title: "Success",
         message: `Token purchase executed successfully ${result.data?.toString()}`,
       });
+      return;
     } catch (error) {
-      console.error(error);
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
-        message: "Failed to execute token purchase",
+        message: error instanceof Error ? error.message : "Failed to execute token purchase",
       });
+      return;
     } finally {
       setIsLoading(false);
     }
