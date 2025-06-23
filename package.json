@@ -485,10 +485,240 @@
         "loan",
         "borrow"
       ]
+    },
+    {
+      "name": "get-price-history",
+      "title": "Get Price History",
+      "description": "Get the price history of a token",
+      "keywords": [
+        "get price history of sol",
+        "fetch price history",
+        "sol price history",
+        "token price history",
+        "token price chart",
+        "token price",
+        "price chart",
+        "24hour price history"
+      ]
     }
   ],
   "ai": {
-    "instructions": "if asked to buy or sell tokens, then do a deep think, check if user is asking to buy which token, is it a token address (token address is usually 44 or more characters long) or a ticker (ticker is usually 3-8 characters long), if ticker then get token info of that ticker then fetch the price of token in usdc and then find how many sol is required for that usdc amount and then buy the token, if user mentions the number of tokens to be bought then first fetch the price of token calculate the input amount in sol and then pass it to buy or sell token function if user mentions input amount in sol then pass it to buy or sell token function directly"
+    "instructions": "if asked to buy or sell tokens, then do a deep think, check if user is asking to buy which token, is it a token address (token address is usually 44 or more characters long) or a ticker (ticker is usually 3-8 characters long), if ticker then get token info of that ticker then fetch the price of token in usdc and then find how many sol is required for that usdc amount and then buy the token, if user mentions the number of tokens to be bought then first fetch the price of token calculate the input amount in sol by multiplying the number of tokens by the priceInSol and then pass it to buy or sell token function if user mentions input amount in sol then pass it to buy or sell token function directly/\n do not render the images in the response for anything except the price history chart, if you are not sure about anything reask the user for more information",
+    "evals": [
+      {
+        "input": "@send-ai buy 10 Send coins",
+        "mocks": {
+          "getTokenDataByTicker": {
+            "status": "success",
+            "message": "Token data retrieved successfully",
+            "result": {
+              "address": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+              "symbol": "SEND",
+              "decimals": 9,
+              "name": "Send",
+              "logoURI": "https://assets.coingecko.com/coins/images/19663/large/SEND.png?1696501628"
+            }
+          },
+          "fetchPrice": {
+            "result": {
+              "price": 0.02,
+              "priceInSol": 0.000098
+            },
+            "status": "success",
+            "message": "Token price retrieved successfully"
+          },
+          "buy-token": {
+            "status": "success",
+            "message": "Trade executed successfully",
+            "result": "<transaction-id>"
+          }
+        },
+        "expected": [
+          {
+            "callsTool": {
+              "name": "getTokenDataByTicker",
+              "arguments": {
+                "ticker": "SEND"
+              }
+            }
+          },
+          {
+            "callsTool": {
+              "name": "fetchPrice",
+              "arguments": {
+                "tokenId": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa"
+              }
+            }
+          },
+          {
+            "callsTool": {
+              "name": "buy-token",
+              "arguments": {
+                "inputMint": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+                "inputAmount": "0.00098"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "input": "@send-ai buy SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa 1 sol",
+        "mocks": {
+          "buy-token": {
+            "status": "success",
+            "message": "Trade executed successfully",
+            "result": "<transaction-id>"
+          }
+        },
+        "expected": [
+          {
+            "callsTool": {
+              "name": "buy-token",
+              "arguments": {
+                "inputMint": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+                "inputAmount": "1"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "input": "@send-ai buy send for 0.07sol",
+        "mocks": {
+          "getTokenDataByTicker": {
+            "status": "success",
+            "message": "Token data retrieved successfully",
+            "result": {
+              "address": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+              "symbol": "SEND",
+              "decimals": 9,
+              "name": "Send",
+              "logoURI": "https://assets.coingecko.com/coins/images/19663/large/SEND.png?1696501628"
+            }
+          },
+          "buy-token": {
+            "status": "success",
+            "message": "Trade executed successfully",
+            "result": "<transaction-id>"
+          }
+        },
+        "expected": [
+          {
+            "callsTool": {
+              "name": "getTokenDataByTicker",
+              "arguments": {
+                "ticker": "SEND"
+              }
+            }
+          },
+          {
+            "callsTool": {
+              "name": "buy-token",
+              "arguments": {
+                "inputMint": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+                "inputAmount": "0.07"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "input": "@send-ai sell 69 send coins",
+        "mocks": {
+          "getTokenDataByTicker": {
+            "status": "success",
+            "message": "Token data retrieved successfully",
+            "result": {
+              "address": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+              "symbol": "SEND",
+              "decimals": 9,
+              "name": "Send",
+              "logoURI": "https://assets.coingecko.com/coins/images/19663/large/SEND.png?1696501628"
+            }
+          },
+          "sell-token": {
+            "status": "success",
+            "message": "Trade executed successfully",
+            "result": "<transaction-id>"
+          }
+        },
+        "expected": [
+          {
+            "callsTool": {
+              "name": "getTokenDataByTicker",
+              "arguments": {
+                "ticker": "SEND"
+              }
+            }
+          },
+          {
+            "callsTool": {
+              "name": "sell-token",
+              "arguments": {
+                "inputMint": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+                "inputAmount": "69"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "input": "@send-ai sell 1sol worth of send",
+        "mocks": {
+          "getTokenDataByTicker": {
+            "status": "success",
+            "message": "Token data retrieved successfully",
+            "result": {
+              "address": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+              "symbol": "SEND",
+              "decimals": 9,
+              "name": "Send",
+              "logoURI": "https://assets.coingecko.com/coins/images/19663/large/SEND.png?1696501628"
+            }
+          },
+          "fetchPrice": {
+            "result": {
+              "price": 0.035,
+              "priceInSol": 0.0002
+            },
+            "status": "success",
+            "message": "Token price retrieved successfully"
+          },
+          "sell-token": {
+            "status": "success",
+            "message": "Trade executed successfully",
+            "result": "<transaction-id>"
+          }
+        },
+        "expected": [
+          {
+            "callsTool": {
+              "name": "getTokenDataByTicker",
+              "arguments": {
+                "ticker": "SEND"
+              }
+            }
+          },
+          {
+            "callsTool": {
+              "name": "fetchPrice",
+              "arguments": {
+                "tokenId": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa"
+              }
+            }
+          },
+          {
+            "callsTool": {
+              "name": "sell-token",
+              "arguments": {
+                "inputMint": "SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa",
+                "inputAmount": "5000"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   "keywords": [
     "chat",

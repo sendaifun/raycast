@@ -22,7 +22,6 @@ export default withAccessToken(provider)(async ({
   website?: string;
 }) => {
   try {
-    console.log("launching Pump.fun token", { name, symbol, amount });
     const params: Record<string, string | number> = {
       name: name,
       symbol: symbol,
