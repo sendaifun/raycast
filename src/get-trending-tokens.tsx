@@ -1,9 +1,10 @@
-import { ActionPanel, Action, List, showToast, Toast, Image } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, Image, Color, Icon } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
-import BuyToken from "./buy-token";
+import BuyTokenForm from "./views/buy-token-form";
+import { getPriceHistory } from "./utils/getPriceHistory";
 
 interface Token {
   address: string;
@@ -36,13 +37,18 @@ function formatPrice(price: number): string {
   return price < 0.01 ? price.toFixed(8) : price.toFixed(4);
 }
 
-function getMarkDown(selectedToken: Token) {
-  return `## ${selectedToken.name} (${selectedToken.symbol})
-
- \`${selectedToken.address}\`
-
-![${selectedToken.name}](${selectedToken.logoURI})`;
-}
+const getChartDataUrl = async (tokenAddress: string) => {
+  const chart = await getPriceHistory({
+    address: tokenAddress,
+    timeFrom: Math.floor(new Date(Date.now() - 1000 * 60 * 60 * 24).getTime() / 1000),
+    timeTo: Math.floor(new Date().getTime() / 1000),
+    timeInterval: "1H",
+  });
+  return chart.data?.chartImageUrl;
+};
+const getMarkDown = (selectedToken: Token, chartDataUrl?: string) => {
+  return `![${selectedToken.name}](${chartDataUrl})`;
+};
 
 const TokenDetailMetadata = ({ token }: { token: Token }) => {
   return (
@@ -72,10 +78,32 @@ const TokenDetailMetadata = ({ token }: { token: Token }) => {
   );
 };
 
+const TokenDetail = ({ token }: { token: Token }) => {
+  const [markdownContent, setMarkdownContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const loadChartData = async () => {
+      setIsLoading(true);
+      const url = await getChartDataUrl(token.address);
+      const markdown = getMarkDown(token, url);
+      setMarkdownContent(markdown);
+      setIsLoading(false);
+    };
+    loadChartData();
+  }, [token.address]);
+  return (
+    <List.Item.Detail
+      isLoading={isLoading}
+      metadata={<TokenDetailMetadata token={token} />}
+      markdown={markdownContent}
+    />
+  );
+};
+
 const GetTrendingTokens = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [tokens, setTokens] = useState<Token[]>([]);
-  const [buyingToken, setBuyingToken] = useState<Token | null>(null);
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
 
   useEffect(() => {
     loadTrendingTokens();
@@ -98,22 +126,38 @@ const GetTrendingTokens = () => {
     }
   }
 
-  if (buyingToken) {
-    return <BuyToken arguments={{ outputMint: buyingToken.address, inputAmount: "1" }} />;
-  }
+  const getAccessories = (token: Token) => {
+    if (selectedToken) {
+      return [{ text: `#${token.rank}` }];
+    }
+    return [
+      { text: `$${formatPrice(token.price)}` },
+      {
+        text: {
+          value: `${token.price24hChangePercent > 0 ? "+" : ""}${token.price24hChangePercent.toFixed(1)}%`,
+          color: token.price24hChangePercent > 0 ? Color.Green : Color.Red,
+          icon: token.price24hChangePercent > 0 ? Icon.ArrowUp : Icon.ArrowDown,
+        },
+      },
+      { text: `#${token.rank}` },
+    ];
+  };
 
   return (
-    <List isLoading={isLoading} isShowingDetail>
+    <List isLoading={isLoading} isShowingDetail={!!selectedToken}>
       {tokens.map((token) => (
         <List.Item
           key={token.address}
           title={token.name}
-          detail={<List.Item.Detail metadata={<TokenDetailMetadata token={token} />} markdown={getMarkDown(token)} />}
-          accessories={[{ text: `#${token.rank}` }]}
+          subtitle={!selectedToken ? `$${formatPrice(token.marketcap)}` : undefined}
+          detail={<TokenDetail token={token} />}
+          accessories={getAccessories(token)}
           icon={{ source: token.logoURI, mask: Image.Mask.RoundedRectangle }}
           actions={
             <ActionPanel>
-              <Action title="Buy" onAction={() => setBuyingToken(token)} />
+              {!selectedToken && <Action title="Show Details" onAction={() => setSelectedToken(token)} />}
+              <Action.Push title="Buy" target={<BuyTokenForm arguments={{ outputMint: token.address }} />} />
+              <Action title="Hide Details" onAction={() => setSelectedToken(null)} />
               <Action title="Refresh" onAction={loadTrendingTokens} />
             </ActionPanel>
           }

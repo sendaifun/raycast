@@ -1,27 +1,49 @@
-import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Form, showToast, Toast, Image } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
-import { withAccessToken } from "@raycast/utils";
+import { withAccessToken, useForm } from "@raycast/utils";
+import { PortfolioToken } from "./type";
 
-interface PortfolioToken {
-  address: string;
-  decimals: number;
-  balance: number;
-  uiAmount: number;
-  chainId: string;
-  name: string;
-  symbol: string;
-  icon?: string;
-  logoURI?: string;
-  priceUsd: number;
-  valueUsd: number;
+interface FormValues {
+  to: string;
+  mintAddress: string;
+  amount: string;
 }
 
 function TransferSPL() {
   const [isLoading, setIsLoading] = useState(false);
   const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
   const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(true);
+  const [txHash, setTxHash] = useState<string | undefined>(undefined);
+
+  const { handleSubmit, itemProps, reset } = useForm<FormValues>({
+    async onSubmit(values) {
+      await handleTransfer(values);
+      reset();
+    },
+    validation: {
+      to: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid wallet address";
+        }
+      },
+      mintAddress: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please select a token from your portfolio";
+        }
+      },
+      amount: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter an amount";
+        }
+        const amount = parseFloat(value);
+        if (isNaN(amount) || amount <= 0) {
+          return "Please enter a valid amount greater than 0";
+        }
+      },
+    },
+  });
 
   useEffect(() => {
     loadPortfolio();
@@ -56,39 +78,12 @@ function TransferSPL() {
     }
   }
 
-  async function handleSubmit(values: { to: string; mintAddress: string; amount: string }) {
+  async function handleTransfer(values: FormValues) {
     try {
       setIsLoading(true);
       const amount = parseFloat(values.amount);
 
-      if (isNaN(amount) || amount <= 0) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid amount",
-          message: "Please enter a valid amount greater than 0",
-        });
-        return;
-      }
-
-      if (!values.to || values.to.trim() === "") {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid address",
-          message: "Please enter a valid wallet address",
-        });
-        return;
-      }
-
-      if (!values.mintAddress || values.mintAddress.trim() === "") {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid token",
-          message: "Please select a token from your portfolio",
-        });
-        return;
-      }
-
-      const result = await executeAction("transferSPL", {
+      const result = await executeAction<{ signature: string }>("transferSPL", {
         to: values.to,
         amount: amount,
         mintAddress: values.mintAddress,
@@ -102,11 +97,15 @@ function TransferSPL() {
         });
         return;
       }
+
       await showToast({
         style: Toast.Style.Success,
         title: "Success",
         message: `SPL token transfer executed successfully`,
       });
+
+      setTxHash(result.data?.signature);
+      loadPortfolio();
     } catch (error) {
       await showToast({
         style: Toast.Style.Failure,
@@ -127,10 +126,13 @@ function TransferSPL() {
           <Action title="Refresh Portfolio" onAction={loadPortfolio} />
         </ActionPanel>
       }
+      searchBarAccessory={
+        txHash ? <Form.LinkAccessory target={`https://solscan.io/tx/${txHash}`} text="View on Solscan" /> : null
+      }
     >
-      <Form.TextField id="to" title="To Address" placeholder="Enter wallet address" />
+      <Form.TextField {...itemProps.to} title="To Address" placeholder="Enter wallet address" />
       <Form.Dropdown
-        id="mintAddress"
+        {...itemProps.mintAddress}
         title="Token"
         placeholder="Select token from portfolio"
         isLoading={isLoadingPortfolio}
@@ -140,10 +142,11 @@ function TransferSPL() {
             key={token.address}
             value={token.address}
             title={`${token.symbol} (Balance: ${token.uiAmount.toFixed(4)})`}
+            icon={{ source: token.logoURI, mask: Image.Mask.Circle }}
           />
         ))}
       </Form.Dropdown>
-      <Form.TextField id="amount" title="Amount" placeholder="Enter amount to transfer" />
+      <Form.TextField {...itemProps.amount} title="Amount" placeholder="Enter amount to transfer" />
     </Form>
   );
 }

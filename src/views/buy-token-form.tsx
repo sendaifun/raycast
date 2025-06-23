@@ -1,19 +1,13 @@
 import { ActionPanel, Action, Form, showToast, Toast, LaunchProps, Detail } from "@raycast/api";
-import { useEffect, useState } from "react";
-import { executeAction } from "./utils/api-wrapper";
-import { provider } from "./utils/auth";
+import { useState } from "react";
+import { executeAction } from "../utils/api-wrapper";
+import { provider } from "../utils/auth";
 import { withAccessToken } from "@raycast/utils";
-import { isValidSolanaAddress } from "./utils/is-valid-address";
+import { isValidSolanaAddress } from "../utils/is-valid-address";
 
-function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmount: string } }>) {
+function BuyTokenForm(props: LaunchProps<{ arguments: { outputMint: string } }>) {
   const [isLoading, setIsLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (props.arguments.outputMint && props.arguments.inputAmount) {
-      handleSubmit({ outputMint: props.arguments.outputMint, inputAmount: props.arguments.inputAmount });
-    }
-  }, [props.arguments.outputMint, props.arguments.inputAmount]);
 
   async function handleSubmit(values: { outputMint: string; inputAmount: string }) {
     try {
@@ -82,15 +76,10 @@ function BuyToken(props: LaunchProps<{ arguments: { outputMint: string; inputAmo
         placeholder="Enter token CA"
         defaultValue={props.arguments.outputMint}
       />
-      <Form.TextField
-        id="inputAmount"
-        title="Amount (in SOL)"
-        placeholder="Enter amount to spend"
-        defaultValue={props.arguments.inputAmount}
-      />
+      <Form.TextField id="inputAmount" title="Amount (in SOL)" placeholder="Enter amount to spend" />
       {txHash && <Detail markdown={`[View on Solscan](https://solscan.io/tx/${txHash})`} />}
     </Form>
   );
 }
 
-export default withAccessToken(provider)(BuyToken);
+export default withAccessToken(provider)(BuyTokenForm);

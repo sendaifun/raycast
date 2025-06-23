@@ -1,22 +1,9 @@
-import { ActionPanel, Action, List, showToast, Toast, Detail } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, Detail, Image } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
-
-interface PortfolioToken {
-  address: string;
-  decimals: number;
-  balance: number;
-  uiAmount: number;
-  chainId: string;
-  name: string;
-  symbol: string;
-  icon?: string;
-  logoURI?: string;
-  priceUsd: number;
-  valueUsd: number;
-}
+import { PortfolioToken } from "./type";
 
 interface PortfolioData {
   wallet: string;
@@ -115,7 +102,7 @@ function GetPortfolio() {
                 { text: `${token.uiAmount.toFixed(4)} ${token.symbol}` },
                 { text: `$${formatNumber(token.valueUsd)}` },
               ]}
-              icon={token.logoURI}
+              icon={{ source: token.logoURI, mask: Image.Mask.Circle }}
               actions={
                 <ActionPanel>
                   <Action.Push

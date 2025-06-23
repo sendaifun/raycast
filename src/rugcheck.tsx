@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
+import BuyTokenForm from "./views/buy-token-form";
 
 interface RugcheckResult {
   status: string;
@@ -114,6 +115,7 @@ function Rugcheck(props: LaunchProps<{ arguments: { tokenAddress: string } }>) {
       markdown={getMarkdown(rugcheckResult, tokenAddress)}
       actions={
         <ActionPanel>
+          <Action.Push title="Buy" target={<BuyTokenForm arguments={{ outputMint: tokenAddress }} />} />
           <Action title="Refresh" onAction={() => handleSubmit({ tokenAddress })} />
         </ActionPanel>
       }

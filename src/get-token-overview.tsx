@@ -4,6 +4,7 @@ import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
+import BuyTokenForm from "./views/buy-token-form";
 
 interface TokenInfo {
   name: string;
@@ -156,6 +157,7 @@ function GetTokenOverview(props: LaunchProps<{ arguments: { tokenAddress: string
       markdown={getMarkdown(tokenInfo)}
       actions={
         <ActionPanel>
+          <Action.Push title="Buy" target={<BuyTokenForm arguments={{ outputMint: tokenAddress }} />} />
           <Action title="Refresh" onAction={() => handleSubmit({ tokenAddress })} />
         </ActionPanel>
       }

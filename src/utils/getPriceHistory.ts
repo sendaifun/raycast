@@ -15,6 +15,7 @@ export async function getPriceHistory({
   timeFrom: number;
   timeTo: number;
   timeInterval: string;
+  size?: "small" | "large";
 }): Promise<ApiResponse<PriceHistory>> {
   try {
     const token = await LocalStorage.getItem<string>(STORAGE_KEYS.BACKEND_SESSION_TOKEN);

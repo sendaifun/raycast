@@ -5,6 +5,7 @@ import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
 import { getPriceHistory } from "./utils/getPriceHistory";
+import BuyTokenForm from "./views/buy-token-form";
 
 function formatPrice(price: number): string {
   return price < 0.01 ? price.toFixed(8) : price.toFixed(4);
@@ -62,6 +63,7 @@ function FetchPrice(props: LaunchProps<{ arguments: { caOrTicker: string } }>) {
           timeFrom: Math.floor(new Date(Date.now() - 1000 * 60 * 60 * 24).getTime() / 1000),
           timeTo: Math.floor(new Date().getTime() / 1000),
           timeInterval: "1H",
+          size: "large",
         });
         setChartDataUrl(chart.data?.chartImageUrl);
         setPrice(Number(result.data));
@@ -114,6 +116,7 @@ function FetchPrice(props: LaunchProps<{ arguments: { caOrTicker: string } }>) {
       markdown={getMarkdown(price, tokenAddressOrTicker, chartDataUrl)}
       actions={
         <ActionPanel>
+          <Action.Push title="Buy" target={<BuyTokenForm arguments={{ outputMint: tokenAddressOrTicker }} />} />
           <Action title="Refresh" onAction={() => handleSubmit({ tokenAddressOrTicker: tokenAddressOrTicker })} />
         </ActionPanel>
       }
