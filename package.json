@@ -1,14 +1,13 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "send-ai-agent",
-  "title": "Send AI Agent",
+  "name": "send-ai",
+  "title": "Send AI",
   "description": "Interact with the Send AI Agent from Raycast using AI",
   "icon": "icon.png",
-  "author": "michael_essiet_emsaa",
+  "author": "kanishq1",
   "contributors": [],
   "categories": [
     "Productivity",
-    "Fun",
     "Finance",
     "Other"
   ],
@@ -17,7 +16,7 @@
     {
       "name": "buy-token",
       "title": "Buy Token",
-      "subtitle": "Send AI Agent",
+      "subtitle": "Send AI",
       "description": "Buy a token",
       "mode": "view",
       "arguments": [
@@ -40,35 +39,35 @@
     {
       "name": "auth",
       "title": "Authenticate",
-      "subtitle": "Send AI Agent",
+      "subtitle": "Send AI",
       "description": "Authenticate the Send AI Agent",
       "mode": "view"
     },
     {
       "name": "balance",
       "title": "Balance",
-      "subtitle": "Send AI Agent",
+      "subtitle": "Send AI",
       "description": "Get the balance of the wallet",
       "mode": "view"
     },
     {
       "name": "transfer-spl",
       "title": "Transfer SPL Token",
-      "subtitle": "Send AI Agent",
+      "subtitle": "Send AI",
       "description": "Transfer SPL tokens to another wallet address. If user mentions the token address then use that address to transfer the token, if user mentions the token ticker then get the token info of that ticker and then transfer the token",
       "mode": "view"
     },
     {
       "name": "get-wallet-address",
-      "title": "Get Wallet Address",
-      "subtitle": "Send AI Agent",
+      "title": "Wallet Address",
+      "subtitle": "Send AI",
       "description": "Get the current wallet address",
       "mode": "view"
     },
     {
       "name": "sell-token",
       "title": "Sell Token",
-      "subtitle": "Send AI Agent",
+      "subtitle": "Send AI",
       "description": "Sell a specific token",
       "mode": "view",
       "arguments": [
@@ -90,8 +89,8 @@
     },
     {
       "name": "fetch-price",
-      "title": "Fetch Price",
-      "subtitle": "Send AI Agent",
+      "title": "Token Price",
+      "subtitle": "Send AI",
       "description": "Get the current price of a token",
       "mode": "view",
       "arguments": [
@@ -106,8 +105,8 @@
     },
     {
       "name": "get-token-overview",
-      "title": "Get Token Overview",
-      "subtitle": "Send AI Agent",
+      "title": "Token Overview",
+      "subtitle": "Send AI",
       "description": "Get information about a specific token",
       "mode": "view",
       "arguments": [
@@ -122,22 +121,22 @@
     },
     {
       "name": "get-trending-tokens",
-      "title": "Get Trending Tokens",
-      "subtitle": "Send AI Agent",
+      "title": "Trending Tokens",
+      "subtitle": "Send AI",
       "description": "Get list of trending tokens",
       "mode": "view"
     },
     {
       "name": "get-portfolio",
-      "title": "Get Portfolio",
-      "subtitle": "Send AI Agent",
+      "title": "Portfolio",
+      "subtitle": "Send AI",
       "description": "Get your token portfolio",
       "mode": "view"
     },
     {
       "name": "rugcheck",
       "title": "Rugcheck",
-      "subtitle": "Send AI Agent",
+      "subtitle": "Send AI",
       "description": "Check if a token is safe from rug pulls",
       "mode": "view",
       "arguments": [
