@@ -1,6 +1,6 @@
 import { ActionPanel, Action, showToast, Toast, Detail, LaunchProps } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { executeAction } from "./shared/api-wrapper";
+import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";

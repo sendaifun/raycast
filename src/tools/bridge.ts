@@ -1,4 +1,4 @@
-import { executeAction } from "../shared/api-wrapper";
+import { executeAction } from "../utils/api-wrapper";
 import { withAccessToken } from "@raycast/utils";
 import { provider } from "../utils/auth";
 

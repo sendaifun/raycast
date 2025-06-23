@@ -1,5 +1,5 @@
 import { withAccessToken } from "@raycast/utils";
-import { executeAction } from "../shared/api-wrapper";
+import { executeAction } from "../utils/api-wrapper";
 import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ to, amount }: { to: string; amount: string }) => {

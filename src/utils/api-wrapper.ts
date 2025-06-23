@@ -1,7 +1,7 @@
 import axios from "axios";
 import { URL_ENDPOINTS } from "../constants/endpoints";
 import { LocalStorage } from "@raycast/api";
-import { STORAGE_KEYS } from "../utils/constants";
+import { STORAGE_KEYS } from "./constants";
 import { PublicKey } from "@solana/web3.js";
 
 export interface ApiResponse<T = unknown> {

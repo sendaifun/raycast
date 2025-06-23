@@ -1,6 +1,6 @@
 import { ActionPanel, Action, List, showToast, Toast, Detail } from "@raycast/api";
 import { useState, useEffect } from "react";
-import { executeAction } from "./shared/api-wrapper";
+import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 
