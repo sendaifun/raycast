@@ -64,6 +64,10 @@ export const provider = {
     const tokens = await client.getTokens();
     return tokens;
   },
+  signOut: async () => {
+    await client.removeTokens();
+    await LocalStorage.removeItem(STORAGE_KEYS.BACKEND_SESSION_TOKEN);
+  },
 };
 
 async function fetchTokens(authRequest: OAuth.AuthorizationRequest, authCode: string): Promise<OAuth.TokenResponse> {

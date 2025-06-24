@@ -37,13 +37,6 @@
       ]
     },
     {
-      "name": "auth",
-      "title": "Authenticate",
-      "subtitle": "Send AI",
-      "description": "Authenticate the Send AI Agent",
-      "mode": "view"
-    },
-    {
       "name": "transfer-spl",
       "title": "Transfer Tokens",
       "subtitle": "Send AI",
