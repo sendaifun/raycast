@@ -149,14 +149,14 @@ const GetTrendingTokens = () => {
         <List.Item
           key={token.address}
           title={token.name}
-          subtitle={!selectedToken ? `$${formatPrice(token.marketcap)}` : undefined}
+          subtitle={!selectedToken ? `$${formatNumber(token.marketcap)}` : undefined}
           detail={<TokenDetail token={token} />}
           accessories={getAccessories(token)}
           icon={{ source: token.logoURI, mask: Image.Mask.RoundedRectangle }}
           actions={
             <ActionPanel>
-              {!selectedToken && <Action title="Show Details" onAction={() => setSelectedToken(token)} />}
               <Action.Push title="Buy" target={<BuyTokenForm arguments={{ outputMint: token.address }} />} />
+              {!selectedToken && <Action title="Show Details" onAction={() => setSelectedToken(token)} />}
               <Action title="Hide Details" onAction={() => setSelectedToken(null)} />
               <Action title="Refresh" onAction={loadTrendingTokens} />
             </ActionPanel>

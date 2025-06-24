@@ -1,9 +1,10 @@
-import { ActionPanel, Action, List, showToast, Toast, Detail, Image } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, Image } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
 import { PortfolioToken } from "./type";
+import GetTokenOverview from "./get-token-overview";
 
 interface PortfolioData {
   wallet: string;
@@ -20,38 +21,6 @@ function formatNumber(num: number): string {
     return (num / 1e3).toFixed(2) + "K";
   }
   return num.toFixed(2);
-}
-
-function formatPrice(price: number): string {
-  return price < 0.01 ? price.toFixed(8) : price.toFixed(4);
-}
-
-function getTokenDetailMarkdown(token: PortfolioToken): string {
-  return `# ${token.name} (${token.symbol})
-
-## Token Details
-
-**Address:** \`${token.address}\`
-
-**Symbol:** ${token.symbol}
-
-**Name:** ${token.name}
-
-**Decimals:** ${token.decimals}
-
-**Chain:** ${token.chainId}
-
-## Holdings
-
-**Balance:** ${token.uiAmount.toFixed(6)} ${token.symbol}
-
-**Raw Balance:** ${token.balance.toLocaleString()}
-
-**Price:** $${formatPrice(token.priceUsd)}
-
-**Value:** $${formatNumber(token.valueUsd)}
-
-${token.logoURI ? `### Logo: ![${token.name}](${token.logoURI})` : ""}`;
 }
 
 function GetPortfolio() {
@@ -107,17 +76,7 @@ function GetPortfolio() {
                 <ActionPanel>
                   <Action.Push
                     title="View Details"
-                    target={
-                      <Detail
-                        markdown={getTokenDetailMarkdown(token)}
-                        actions={
-                          <ActionPanel>
-                            <Action title="Back to Portfolio" onAction={() => {}} />
-                            <Action title="Refresh" onAction={loadPortfolio} />
-                          </ActionPanel>
-                        }
-                      />
-                    }
+                    target={<GetTokenOverview arguments={{ tokenAddress: token.address }} />}
                   />
                   <Action title="Refresh" onAction={loadPortfolio} />
                 </ActionPanel>

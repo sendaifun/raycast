@@ -44,24 +44,17 @@
       "mode": "view"
     },
     {
-      "name": "balance",
-      "title": "Balance",
-      "subtitle": "Send AI",
-      "description": "Get the balance of the wallet",
-      "mode": "view"
-    },
-    {
       "name": "transfer-spl",
-      "title": "Transfer SPL Token",
+      "title": "Transfer Tokens",
       "subtitle": "Send AI",
       "description": "Transfer SPL tokens to another wallet address. If user mentions the token address then use that address to transfer the token, if user mentions the token ticker then get the token info of that ticker and then transfer the token",
       "mode": "view"
     },
     {
-      "name": "get-wallet-address",
-      "title": "Wallet Address",
+      "name": "get-wallet",
+      "title": "Wallet",
       "subtitle": "Send AI",
-      "description": "Get the current wallet address",
+      "description": "Get your Send AI wallet",
       "mode": "view"
     },
     {
@@ -83,22 +76,6 @@
           "type": "text",
           "title": "Amount",
           "placeholder": "enter number of tokens",
-          "required": true
-        }
-      ]
-    },
-    {
-      "name": "fetch-price",
-      "title": "Token Price",
-      "subtitle": "Send AI",
-      "description": "Get the current price of a token",
-      "mode": "view",
-      "arguments": [
-        {
-          "name": "caOrTicker",
-          "type": "text",
-          "title": "Token Address or Ticker",
-          "placeholder": "Enter token CA or ticker",
           "required": true
         }
       ]
@@ -134,20 +111,12 @@
       "mode": "view"
     },
     {
-      "name": "rugcheck",
-      "title": "Rugcheck",
+      "name": "create-dca",
+      "title": "Create DCA",
       "subtitle": "Send AI",
-      "description": "Check if a token is safe from rug pulls",
+      "description": "Create a DCA order",
       "mode": "view",
-      "arguments": [
-        {
-          "name": "tokenAddress",
-          "type": "text",
-          "title": "Token Address",
-          "placeholder": "Enter token address",
-          "required": true
-        }
-      ]
+      "arguments": []
     }
   ],
   "tools": [
