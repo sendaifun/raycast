@@ -1,13 +1,13 @@
 import { LocalStorage, OAuth } from "@raycast/api";
-import { BackendAuthResponse } from "../hooks/useGoogleAuth";
+import { BackendAuthResponse } from "../type";
 import { BACKEND_CALLBACK_URL, STORAGE_KEYS } from "./constants";
 
 const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.AppURI,
   providerName: "Send AI",
-  providerIcon: "google-logo.jpg",
+  providerIcon: "icon.png",
   providerId: "google",
-  description: "Connect your Google account\n(Send AI)",
+  description: "Connect your Google account to Send AI\n(Powered by Turnkey)",
 });
 
 const GOOGLE_CLIENT_ID = "12412930892-lglh33r17pqmobh28op3v9rv5nj9trbg.apps.googleusercontent.com";

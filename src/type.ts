@@ -68,3 +68,8 @@ export interface RugcheckResult {
     score_normalised: number;
   };
 }
+
+export interface BackendAuthResponse {
+  token?: string;
+  message?: string;
+}

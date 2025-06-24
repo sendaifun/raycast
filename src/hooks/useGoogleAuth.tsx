@@ -3,6 +3,7 @@ import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { BACKEND_CALLBACK_URL, STORAGE_KEYS } from "../utils/constants";
 import fetch from "node-fetch";
 import { OAuth } from "@raycast/api";
+import { BackendAuthResponse } from "../type";
 
 const GOOGLE_CLIENT_ID = "12412930892-lglh33r17pqmobh28op3v9rv5nj9trbg.apps.googleusercontent.com";
 
@@ -13,11 +14,6 @@ export const client = new OAuth.PKCEClient({
   providerId: "google",
   description: "Connect your Google account\n(Solana Agent)",
 });
-
-export interface BackendAuthResponse {
-  token?: string;
-  message?: string;
-}
 
 export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
