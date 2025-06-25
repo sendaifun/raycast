@@ -124,6 +124,13 @@
       "subtitle": "SendAI",
       "description": "Show all limit orders",
       "mode": "view"
+    },
+    {
+      "name": "show-dca-orders",
+      "title": "Show DCA Orders",
+      "subtitle": "SendAI",
+      "description": "Show all DCA orders",
+      "mode": "view"
     }
   ],
   "tools": [

@@ -34,6 +34,7 @@ SendAI is a Raycast extension that allows you to interact with the Solana blockc
 - **Create DCA** - Set up Dollar Cost Averaging orders
 - **Create Limit Order** - Create limit orders for trading
 - **Show Limit Orders** - View all your active limit orders
+- **Show DCA Orders** - View all your active DCA orders
 
 # AI Actions
 

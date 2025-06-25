@@ -140,7 +140,11 @@ const ShowLimitOrders = () => {
                   url={`https://solscan.io/tx/${order.openTx}`}
                   shortcut={{ modifiers: ["cmd"], key: "o" }}
                 />
-                <Action title="Cancel" onAction={() => cancelLimitOrder(order.orderKey)} />
+                <Action
+                  title="Cancel"
+                  shortcut={{ modifiers: ["cmd"], key: "x" }}
+                  onAction={() => cancelLimitOrder(order.orderKey)}
+                />
                 <Action title="Refresh" onAction={loadLimitOrders} shortcut={{ modifiers: ["cmd"], key: "r" }} />
               </ActionPanel>
             }

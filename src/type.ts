@@ -124,3 +124,40 @@ export interface TokenInfo {
     "24 hours": number;
   };
 }
+
+export interface DCAOrderTrade {
+  orderKey: string;
+  keeper: string;
+  inputMint: string;
+  outputMint: string;
+  inputAmount: string;
+  outputAmount: string;
+  feeMint: string;
+  feeAmount: string;
+  txId: string;
+  confirmedAt: string;
+  action: string;
+  productMeta: unknown;
+}
+
+export interface DCAOrder {
+  userPubkey: string;
+  orderKey: string;
+  inputMint: string;
+  outputMint: string;
+  inDeposited: string;
+  inWithdrawn: string;
+  cycleFrequency: string;
+  outWithdrawn: string;
+  inAmountPerCycle: string;
+  minOutAmount: string;
+  maxOutAmount: string;
+  inUsed: string;
+  outReceived: string;
+  openTx: string;
+  closeTx: string;
+  userClosed: boolean;
+  createdAt: string;
+  updatedAt: string;
+  trades: DCAOrderTrade[];
+}
