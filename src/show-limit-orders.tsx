@@ -116,6 +116,7 @@ const ShowLimitOrders = () => {
 
   const cancelLimitOrder = async (orderKey: string) => {
     try {
+      setIsLoading(true);
       await executeAction("cancelLO", { orderKey });
       await loadLimitOrders();
     } catch (error) {
