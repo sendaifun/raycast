@@ -4,8 +4,7 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async function () {
   try {
-    console.log("getting SOL balance");
-    const result = await executeAction("getSolBalance");
+    const result = await executeAction("getSolBalance", {}, false);
     return {
       status: "success",
       message: "SOL balance retrieved successfully",

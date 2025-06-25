@@ -112,7 +112,7 @@ const GetTrendingTokens = () => {
   async function loadTrendingTokens() {
     try {
       setIsLoading(true);
-      const result = await executeAction("getTrendingTokens");
+      const result = await executeAction("getTrendingTokens", {}, true, 1000 * 60 * 5);
       setTokens(result.data as Token[]);
     } catch (error) {
       console.error(error);

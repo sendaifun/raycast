@@ -17,8 +17,8 @@ function GetWalletAddress() {
   async function loadWallet() {
     try {
       setIsLoading(true);
-      const result = await executeAction("getWalletAddress");
-      const balance = await executeAction("getSolBalance");
+      const result = await executeAction("getWalletAddress", {}, true, 1000 * 60 * 60 * 24);
+      const balance = await executeAction("getSolBalance", {}, true, 1000 * 60);
       setWalletAddress(result.data?.toString() || "");
       setBalance(balance.data?.toString() || "");
     } catch (error) {

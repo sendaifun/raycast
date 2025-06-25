@@ -108,18 +108,33 @@ function GetTokenOverview(props: LaunchProps<{ arguments: { tokenAddress: string
       let tokenInfo: TokenInfo;
 
       if (isValidSolanaAddress(values.tokenAddress)) {
-        const result = await executeAction("getToken", {
-          tokenId: values.tokenAddress,
-        });
+        const result = await executeAction(
+          "getToken",
+          {
+            tokenId: values.tokenAddress,
+          },
+          true,
+          1000 * 60 * 5,
+        );
         tokenInfo = result.data as TokenInfo;
       } else {
-        const { data } = await executeAction("getTokenDataByTicker", {
-          ticker: values.tokenAddress,
-        });
+        const { data } = await executeAction(
+          "getTokenDataByTicker",
+          {
+            ticker: values.tokenAddress,
+          },
+          true,
+          1000 * 60 * 60,
+        );
         finalTokenAddress = (data as { address: string }).address;
-        const { data: tokenInfoData } = (await executeAction("getToken", {
-          tokenId: finalTokenAddress,
-        })) as { data: TokenInfo };
+        const { data: tokenInfoData } = (await executeAction(
+          "getToken",
+          {
+            tokenId: finalTokenAddress,
+          },
+          true,
+          1000 * 60 * 5,
+        )) as { data: TokenInfo };
         tokenInfo = tokenInfoData;
       }
 
@@ -144,9 +159,14 @@ function GetTokenOverview(props: LaunchProps<{ arguments: { tokenAddress: string
       setIsLoading(false);
 
       try {
-        const rugcheck = await executeAction("rugcheck", {
-          tokenAddress: finalTokenAddress,
-        });
+        const rugcheck = await executeAction(
+          "rugcheck",
+          {
+            tokenAddress: finalTokenAddress,
+          },
+          true,
+          1000 * 60 * 60 * 24,
+        );
         setRugcheckData(rugcheck as RugcheckResult);
       } catch (rugcheckError) {
         console.error("Failed to fetch rugcheck:", rugcheckError);

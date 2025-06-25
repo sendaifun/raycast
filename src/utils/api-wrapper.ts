@@ -54,7 +54,10 @@ export async function executeAction<T>(
 
     // Try to get cached result first
     cachedResult = cache.get<ApiResponse<T>>();
-    if (cachedResult) return cachedResult;
+    if (cachedResult) {
+      console.log(`Return Cached result for ${method}`);
+      return cachedResult;
+    }
   }
 
   try {
@@ -82,7 +85,7 @@ export async function executeAction<T>(
     if (useCache && cache) {
       const cacheTime = cacheTimeMs || 2 * 60 * 1000; // Default to 2 minutes if not specified
       cache.set(response.data, cacheTime);
-      console.log(`Cached result for ${method} (${cacheTime} minutes)`);
+      console.log(`Cached result for ${method} (${cacheTime} ms)`);
     }
 
     return response.data;

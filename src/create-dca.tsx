@@ -63,9 +63,14 @@ function CreateDCA() {
     try {
       setIsLoading(true);
 
-      const { data: tokenInfo } = await executeAction<TokenInfo>("getToken", {
-        inputMint: values.inputMint,
-      });
+      const { data: tokenInfo } = await executeAction<TokenInfo>(
+        "getToken",
+        {
+          inputMint: values.inputMint,
+        },
+        true,
+        1000 * 60,
+      );
 
       if (!tokenInfo) {
         await showToast({
@@ -93,7 +98,7 @@ function CreateDCA() {
 
       console.log(apiParams);
 
-      const result = await executeAction("createDCA", apiParams);
+      const result = await executeAction("createDCA", apiParams, false);
 
       setTxHash(result.data?.toString() ?? null);
 

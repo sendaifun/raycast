@@ -4,8 +4,7 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async () => {
   try {
-    console.log("getting portfolio");
-    const result = await executeAction("getPortfolio");
+    const result = await executeAction("getPortfolio", {}, true, 1000 * 60);
     return {
       status: "success",
       message: "Portfolio retrieved successfully",

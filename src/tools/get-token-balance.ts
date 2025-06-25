@@ -4,10 +4,14 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ tokenAddress }: { tokenAddress: string }) => {
   try {
-    console.log("getting token balance", tokenAddress);
-    const result = await executeAction("getTokenBalance", {
-      mintAddress: tokenAddress,
-    });
+    const result = await executeAction(
+      "getTokenBalance",
+      {
+        mintAddress: tokenAddress,
+      },
+      true,
+      1000 * 60,
+    );
     return {
       status: "success",
       message: "Token balance retrieved successfully",

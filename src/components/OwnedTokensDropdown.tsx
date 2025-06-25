@@ -29,7 +29,7 @@ export function OwnedTokensDropdown({
   async function loadPortfolio() {
     try {
       setIsLoading(true);
-      const result = await executeAction("getPortfolio");
+      const result = await executeAction("getPortfolio", {}, true, 1000 * 60);
       const portfolioResult = result as { data: { items: PortfolioToken[] } };
 
       if (

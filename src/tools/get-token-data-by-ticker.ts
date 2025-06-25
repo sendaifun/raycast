@@ -5,9 +5,14 @@ import { provider } from "../utils/auth";
 export default withAccessToken(provider)(async ({ ticker }: { ticker: string }) => {
   try {
     console.log("getting token data by ticker", ticker);
-    const result = await executeAction("getTokenDataByTicker", {
-      ticker: ticker,
-    });
+    const result = await executeAction(
+      "getTokenDataByTicker",
+      {
+        ticker: ticker,
+      },
+      true,
+      1000 * 60,
+    );
     return {
       status: "success",
       message: "Token data retrieved successfully",

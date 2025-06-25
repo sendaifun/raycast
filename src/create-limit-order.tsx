@@ -93,9 +93,14 @@ function CreateLimitOrder() {
     }
 
     try {
-      const { data: tokenInfo } = await executeAction<TokenInfo>("getToken", {
-        inputMint: tokenAddress,
-      });
+      const { data: tokenInfo } = await executeAction<TokenInfo>(
+        "getToken",
+        {
+          inputMint: tokenAddress,
+        },
+        true,
+        1000 * 60,
+      );
 
       setSecondaryTokenInfo(tokenInfo);
 

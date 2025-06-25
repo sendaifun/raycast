@@ -4,10 +4,14 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ tokenAddress }: { tokenAddress: string }) => {
   try {
-    console.log("getting token", tokenAddress);
-    const result = await executeAction("getToken", {
-      address: tokenAddress,
-    });
+    const result = await executeAction(
+      "getToken",
+      {
+        address: tokenAddress,
+      },
+      true,
+      1000 * 60,
+    );
     return {
       status: "success",
       message: "Token data retrieved successfully",

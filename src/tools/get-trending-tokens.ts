@@ -4,8 +4,7 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async () => {
   try {
-    console.log("getting trending tokens");
-    const result = await executeAction("getTrendingTokens");
+    const result = await executeAction("getTrendingTokens", {}, true, 1000 * 60 * 2);
     return {
       status: "success",
       message: "Trending tokens retrieved successfully",
