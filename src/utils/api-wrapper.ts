@@ -84,8 +84,10 @@ export async function executeAction<T>(
     // Cache the successful result only if caching is enabled
     if (useCache && cache) {
       const cacheTime = cacheTimeMs || 2 * 60 * 1000; // Default to 2 minutes if not specified
-      cache.set(response.data, cacheTime);
-      console.log(`Cached result for ${method} (${cacheTime} ms)`);
+      if (response.data.status === "success") {
+        cache.set(response.data, cacheTime);
+        // console.log(`Cached result for ${method} (${cacheTime} ms)`);
+      }
     }
 
     return response.data;

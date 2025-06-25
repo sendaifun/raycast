@@ -1,4 +1,4 @@
-import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Form, showToast, Toast, Image } from "@raycast/api";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { ApiParams, executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
@@ -6,7 +6,7 @@ import { withAccessToken, useForm } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
 import { LimitOrderRequest, TokenInfo } from "./type";
 import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
-import { SOL, USDC } from "./constants/tokenAddress";
+import { SOL, USDC, WRAPPED_SOL_ADDRESS } from "./constants/tokenAddress";
 import { convertUsdAmountToSol } from "./utils/convert-usd-amount-to-sol";
 
 // In this component primary token is SOL or USDC, secondary token is the other token being traded
@@ -18,10 +18,9 @@ function CreateLimitOrder() {
   const [secondaryTokenInfo, setSecondaryTokenInfo] = useState<TokenInfo | undefined>(undefined);
   const [secondaryTokenSolPrice, setSecondaryTokenSolPrice] = useState<number | undefined>(undefined);
 
-  const { handleSubmit, itemProps, reset, setValue } = useForm<LimitOrderRequest>({
+  const { handleSubmit, itemProps, setValue } = useForm<LimitOrderRequest>({
     async onSubmit(values) {
       await handleCreateLimitOrder(values);
-      reset();
     },
     validation: {
       inputMint: (value) => {
@@ -107,16 +106,16 @@ function CreateLimitOrder() {
       const tokenPriceInSol = await convertUsdAmountToSol({ usdAmount: tokenInfo?.price ?? 0 });
       setSecondaryTokenSolPrice(tokenPriceInSol);
 
-      const triggerPriceValue = isPrimaryMintSol
-        ? (tokenPriceInSol?.toFixed(8) ?? "0")
-        : (tokenInfo?.price.toFixed(6) ?? "0");
+      // const triggerPriceValue = isPrimaryMintSol
+      //   ? (tokenPriceInSol?.toFixed(8) ?? "0")
+      //   : (tokenInfo?.price.toFixed(6) ?? "0");
 
-      setValue("triggerPrice", triggerPriceValue);
+      // setValue("triggerPrice", triggerPriceValue);
     } catch {
       setSecondaryTokenInfo(undefined);
       setSecondaryTokenSolPrice(undefined);
     }
-  }, [getSecondaryTokenAddress, isPrimaryMintSol, setValue]);
+  }, [getSecondaryTokenAddress, isPrimaryMintSol]);
 
   useEffect(() => {
     loadSecondaryTokenInfo();
@@ -136,20 +135,18 @@ function CreateLimitOrder() {
           return;
         }
 
-        const takingAmount = parseFloat(values.makingAmount) / parseFloat(values.triggerPrice);
-        const primaryTokenDecimals = isPrimaryMintSol ? 9 : 6;
-        const secondaryTokenDecimals = secondaryTokenInfo.decimals;
+        const takingAmount = isInputMintSolOrUsdc
+          ? parseFloat(values.makingAmount) / parseFloat(values.triggerPrice)
+          : parseFloat(values.makingAmount) * parseFloat(values.triggerPrice);
+
+        const inputMint = values.inputMint === SOL.address ? WRAPPED_SOL_ADDRESS : values.inputMint;
+        const outputMint = values.outputMint === SOL.address ? WRAPPED_SOL_ADDRESS : values.outputMint;
 
         const apiParams: ApiParams = {
-          inputMint: values.inputMint,
-          outputMint: values.outputMint,
-          makingAmount: (
-            Math.pow(10, isInputMintSolOrUsdc ? primaryTokenDecimals : secondaryTokenDecimals) *
-            parseFloat(values.makingAmount)
-          ).toFixed(0),
-          takingAmount: (
-            Math.pow(10, isInputMintSolOrUsdc ? secondaryTokenDecimals : primaryTokenDecimals) * takingAmount
-          ).toFixed(0),
+          inputMint: inputMint,
+          outputMint: outputMint,
+          makingAmount: values.makingAmount.toString(),
+          takingAmount: takingAmount.toString(),
         };
 
         if (values.expiredAt) {
@@ -189,7 +186,10 @@ function CreateLimitOrder() {
 
   const currentPrice = isPrimaryMintSol ? secondaryTokenSolPrice : secondaryTokenInfo?.price;
   const priceUnit = isPrimaryMintSol ? "SOL" : "USD";
-  const triggerPriceValue = itemProps.triggerPrice.value ?? "0";
+
+  useEffect(() => {
+    setValue("triggerPrice", (formatPrice(currentPrice) ?? 0).toString());
+  }, [currentPrice]);
 
   return (
     <Form
@@ -214,8 +214,16 @@ function CreateLimitOrder() {
         <Form.TextField {...itemProps.outputMint} title="Buying" placeholder="Enter output token CA" />
       ) : (
         <Form.Dropdown {...itemProps.outputMint} title="Buying" placeholder="Enter output token CA">
-          <Form.Dropdown.Item value={SOL.address} title={SOL.name} icon={{ source: SOL.logoURI }} />
-          <Form.Dropdown.Item value={USDC.address} title={USDC.name} icon={{ source: USDC.logoURI }} />
+          <Form.Dropdown.Item
+            value={SOL.address}
+            title={SOL.name}
+            icon={{ source: SOL.logoURI, mask: Image.Mask.Circle }}
+          />
+          <Form.Dropdown.Item
+            value={USDC.address}
+            title={USDC.name}
+            icon={{ source: USDC.logoURI, mask: Image.Mask.Circle }}
+          />
         </Form.Dropdown>
       )}
 
@@ -228,6 +236,9 @@ function CreateLimitOrder() {
 
       <Form.TextField
         {...itemProps.triggerPrice}
+        onChange={(value) => {
+          setValue("triggerPrice", value);
+        }}
         title={isInputMintSolOrUsdc ? "Buy when price is" : "Sell when price is"}
         placeholder={
           isInputMintSolOrUsdc
@@ -240,7 +251,7 @@ function CreateLimitOrder() {
         title=""
         text={`Trade will be executed when ${
           isInputMintSolOrUsdc ? "token you are buying" : "token you are selling"
-        } is at price ${triggerPriceValue} ${priceUnit}`}
+        } is at price ${formatPrice(parseFloat(itemProps.triggerPrice.value ?? "0"))} ${priceUnit}`}
       />
     </Form>
   );

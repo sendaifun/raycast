@@ -4,8 +4,9 @@ import { executeAction, ApiParams } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken, useForm } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
-import { DCARequest, TokenInfo } from "./type";
+import { DCARequest } from "./type";
 import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
+import { SOL, WRAPPED_SOL_ADDRESS } from "./constants/tokenAddress";
 
 function CreateDCA() {
   const [isLoading, setIsLoading] = useState(false);
@@ -63,40 +64,20 @@ function CreateDCA() {
     try {
       setIsLoading(true);
 
-      const { data: tokenInfo } = await executeAction<TokenInfo>(
-        "getToken",
-        {
-          inputMint: values.inputMint,
-        },
-        true,
-        1000 * 60,
-      );
+      const inputMint = values.inputMint === SOL.address ? WRAPPED_SOL_ADDRESS : values.inputMint;
+      const outputMint = values.outputMint === SOL.address ? WRAPPED_SOL_ADDRESS : values.outputMint;
 
-      if (!tokenInfo) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Error",
-          message: "Token not found",
-        });
-        return;
-      }
-
-      const inputMintDecimals = tokenInfo.decimals;
-
-      const inAmount = (parseFloat(values.inAmount) * Math.pow(10, inputMintDecimals)).toFixed(0);
       const numberOfOrders = parseInt(values.numberOfOrders);
       const interval = parseInt(values.interval);
 
       const apiParams: ApiParams = {
-        inputMint: values.inputMint,
-        outputMint: values.outputMint,
-        inputAmountAllocated: inAmount,
+        inputMint: inputMint,
+        outputMint: outputMint,
+        inputAmountAllocated: values.inAmount,
         everyTime: interval,
         everyUnit: "minute",
         overOrder: numberOfOrders,
       };
-
-      console.log(apiParams);
 
       const result = await executeAction("createDCA", apiParams, false);
 
