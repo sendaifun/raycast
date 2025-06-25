@@ -7,7 +7,7 @@ const client = new OAuth.PKCEClient({
   providerName: "Send AI",
   providerIcon: "icon.png",
   providerId: "google",
-  description: "Connect your Google account to Send AI\n(Powered by Turnkey)",
+  description: "Connect your Google account to Send AI\n(Wallet powered by Privy)",
 });
 
 const GOOGLE_CLIENT_ID = "12412930892-lglh33r17pqmobh28op3v9rv5nj9trbg.apps.googleusercontent.com";
