@@ -97,5 +97,5 @@ Just install the extension, login with google and start using the it.
 ---
 
 <p align="right">
-Made with ♥ from the SendAI team
+Made by the SendAI team
 </p>
