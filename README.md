@@ -92,7 +92,7 @@ Simply type natural language commands to interact with your Solana wallet:
 
 # Setup
 
-This extension requires:
+Just install the extension, login with google and start using the it.
 
 ---
 
