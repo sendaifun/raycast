@@ -1,116 +1,190 @@
-import { ActionPanel, Action, Form, showToast, Toast, LaunchProps, Detail } from "@raycast/api";
-import { useEffect, useState } from "react";
-import { executeAction } from "./utils/api-wrapper";
+import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { ApiParams, executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
-import { withAccessToken } from "@raycast/utils";
+import { withAccessToken, useForm } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
+import { LimitOrderRequest, TokenInfo } from "./type";
+import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
+import { SOL, USDC } from "./constants/tokenAddress";
+import { convertUsdAmountToSol } from "./utils/convert-usd-amount-to-sol";
 
-function CreateLimitOrder(
-  props: LaunchProps<{ arguments: { inputMint: string; outputMint: string; makingAmount: string } }>,
-) {
+// In this component primary token is SOL or USDC, secondary token is the other token being traded
+
+function CreateLimitOrder() {
   const [isLoading, setIsLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [inputMintValue, setInputMintValue] = useState<"sol" | "usdc" | "other">("other");
+  const [secondaryTokenInfo, setSecondaryTokenInfo] = useState<TokenInfo | undefined>(undefined);
+  const [secondaryTokenSolPrice, setSecondaryTokenSolPrice] = useState<number | undefined>(undefined);
+
+  const { handleSubmit, itemProps, reset, setValue } = useForm<LimitOrderRequest>({
+    async onSubmit(values) {
+      await handleCreateLimitOrder(values);
+      reset();
+    },
+    validation: {
+      inputMint: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid input token address";
+        }
+      },
+      outputMint: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid output token address";
+        }
+        if (!isValidSolanaAddress(value) && value !== SOL.address) {
+          return "Please enter a valid output token address";
+        }
+      },
+      makingAmount: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid amount";
+        }
+        const amount = parseFloat(value);
+        if (isNaN(amount) || amount <= 0) {
+          return "Please enter a valid amount greater than 0";
+        }
+      },
+      triggerPrice: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid amount";
+        }
+        const amount = parseFloat(value);
+        if (isNaN(amount) || amount <= 0) {
+          return "Please enter a valid amount greater than 0";
+        }
+      },
+    },
+  });
+
+  const isInputMintSolOrUsdc = useMemo(() => inputMintValue === "sol" || inputMintValue === "usdc", [inputMintValue]);
+
+  const isPrimaryMintSol = useMemo(
+    () => itemProps.inputMint.value === SOL.address || itemProps.outputMint.value === SOL.address,
+    [itemProps.inputMint.value, itemProps.outputMint.value],
+  );
+
+  const getSecondaryTokenAddress = useCallback(() => {
+    if (isInputMintSolOrUsdc && itemProps.outputMint.value) {
+      return itemProps.outputMint.value;
+    }
+    if (!isInputMintSolOrUsdc && itemProps.inputMint.value) {
+      return itemProps.inputMint.value;
+    }
+    return null;
+  }, [isInputMintSolOrUsdc, itemProps.inputMint.value, itemProps.outputMint.value]);
+
+  const formatPrice = useCallback(
+    (price: number | undefined) => {
+      if (!price) return "0";
+      return isPrimaryMintSol ? price.toFixed(8) : price.toFixed(6);
+    },
+    [isPrimaryMintSol],
+  );
+
+  const loadSecondaryTokenInfo = useCallback(async () => {
+    const tokenAddress = getSecondaryTokenAddress();
+
+    if (!tokenAddress || !isValidSolanaAddress(tokenAddress)) {
+      setSecondaryTokenInfo(undefined);
+      setSecondaryTokenSolPrice(undefined);
+      return;
+    }
+
+    try {
+      const { data: tokenInfo } = await executeAction<TokenInfo>("getToken", {
+        inputMint: tokenAddress,
+      });
+
+      setSecondaryTokenInfo(tokenInfo);
+
+      const tokenPriceInSol = await convertUsdAmountToSol({ usdAmount: tokenInfo?.price ?? 0 });
+      setSecondaryTokenSolPrice(tokenPriceInSol);
+
+      const triggerPriceValue = isPrimaryMintSol
+        ? (tokenPriceInSol?.toFixed(8) ?? "0")
+        : (tokenInfo?.price.toFixed(6) ?? "0");
+
+      setValue("triggerPrice", triggerPriceValue);
+    } catch {
+      setSecondaryTokenInfo(undefined);
+      setSecondaryTokenSolPrice(undefined);
+    }
+  }, [getSecondaryTokenAddress, isPrimaryMintSol, setValue]);
 
   useEffect(() => {
-    if (props.arguments.inputMint && props.arguments.outputMint && props.arguments.makingAmount) {
-      // Auto-submit if all required arguments are provided
-      // Note: This would need additional form values, so we'll let user fill the form
-    }
-  }, [props.arguments.inputMint, props.arguments.outputMint, props.arguments.makingAmount]);
+    loadSecondaryTokenInfo();
+  }, [loadSecondaryTokenInfo]);
 
-  async function handleSubmit(values: {
-    inputMint: string;
-    outputMint: string;
-    makingAmount: string;
-    takingAmount: string;
-    slippageBps?: string;
-    expiredAt?: Date;
-    feeBps?: string;
-  }) {
-    try {
-      setIsLoading(true);
+  const handleCreateLimitOrder = useCallback(
+    async (values: LimitOrderRequest) => {
+      try {
+        setIsLoading(true);
 
-      if (!values.makingAmount || values.makingAmount.trim() === "") {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid making amount",
-          message: "Please enter a valid making amount",
-        });
-        return;
-      }
-
-      if (!values.takingAmount || values.takingAmount.trim() === "") {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid taking amount",
-          message: "Please enter a valid taking amount",
-        });
-        return;
-      }
-
-      if (!isValidSolanaAddress(values.inputMint)) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid input token",
-          message: "Please enter a valid input token address",
-        });
-        return;
-      }
-
-      if (!isValidSolanaAddress(values.outputMint)) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid output token",
-          message: "Please enter a valid output token address",
-        });
-        return;
-      }
-
-      const apiParams: Record<string, string | number> = {
-        inputMint: values.inputMint,
-        outputMint: values.outputMint,
-        makingAmount: values.makingAmount,
-        takingAmount: values.takingAmount,
-      };
-
-      // Only add optional parameters if they have values
-      if (values.slippageBps) {
-        const slippageBps = parseInt(values.slippageBps);
-        if (!isNaN(slippageBps)) {
-          apiParams.slippageBps = slippageBps;
+        if (!secondaryTokenInfo) {
+          await showToast({
+            style: Toast.Style.Failure,
+            title: "Error",
+            message: "Token not found",
+          });
+          return;
         }
-      }
-      if (values.expiredAt) {
-        apiParams.expiredAt = Math.floor(values.expiredAt.getTime() / 1000);
-      }
-      if (values.feeBps) {
-        const feeBps = parseInt(values.feeBps);
-        if (!isNaN(feeBps)) {
-          apiParams.feeBps = feeBps;
+
+        const takingAmount = parseFloat(values.makingAmount) / parseFloat(values.triggerPrice);
+        const primaryTokenDecimals = isPrimaryMintSol ? 9 : 6;
+        const secondaryTokenDecimals = secondaryTokenInfo.decimals;
+
+        const apiParams: ApiParams = {
+          inputMint: values.inputMint,
+          outputMint: values.outputMint,
+          makingAmount: (
+            Math.pow(10, isInputMintSolOrUsdc ? primaryTokenDecimals : secondaryTokenDecimals) *
+            parseFloat(values.makingAmount)
+          ).toFixed(0),
+          takingAmount: (
+            Math.pow(10, isInputMintSolOrUsdc ? secondaryTokenDecimals : primaryTokenDecimals) * takingAmount
+          ).toFixed(0),
+        };
+
+        if (values.expiredAt) {
+          apiParams.expiredAt = Math.floor(values.expiredAt.getTime() / 1000);
         }
+
+        const result = await executeAction("createLO", apiParams);
+        const txHashResult = result.data?.toString() ?? null;
+        setTxHash(txHashResult);
+
+        await showToast({
+          style: Toast.Style.Success,
+          title: "Success",
+          message: `Limit order created successfully${txHashResult ? ` ${txHashResult}` : ""}`,
+        });
+      } catch (error) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Error",
+          message: error instanceof Error ? error.message : "Failed to create limit order",
+        });
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [secondaryTokenInfo, isPrimaryMintSol, isInputMintSolOrUsdc],
+  );
 
-      const result = await executeAction("createLO", apiParams);
+  const handleInputMintChange = useCallback(
+    (value: string) => {
+      const mintType = value === SOL.address ? "sol" : value === USDC.address ? "usdc" : "other";
+      setInputMintValue(mintType);
+      setValue("outputMint", "");
+    },
+    [setValue],
+  );
 
-      setTxHash(result.data?.toString() ?? null);
-
-      await showToast({
-        style: Toast.Style.Success,
-        title: "Success",
-        message: `Limit order created successfully ${result.data?.toString()}`,
-      });
-      return;
-    } catch (error) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Error",
-        message: error instanceof Error ? error.message : "Failed to create limit order",
-      });
-      return;
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const currentPrice = isPrimaryMintSol ? secondaryTokenSolPrice : secondaryTokenInfo?.price;
+  const priceUnit = isPrimaryMintSol ? "SOL" : "USD";
+  const triggerPriceValue = itemProps.triggerPrice.value ?? "0";
 
   return (
     <Form
@@ -124,29 +198,45 @@ function CreateLimitOrder(
         </ActionPanel>
       }
     >
-      <Form.TextField
-        id="inputMint"
-        title="Input Token Address"
+      <OwnedTokensDropdown
+        onChange={handleInputMintChange}
+        title="Selling"
         placeholder="Enter input token CA"
-        defaultValue={props.arguments.inputMint}
+        itemProps={itemProps.inputMint}
       />
+
+      {isInputMintSolOrUsdc ? (
+        <Form.TextField {...itemProps.outputMint} title="Buying" placeholder="Enter output token CA" />
+      ) : (
+        <Form.Dropdown {...itemProps.outputMint} title="Buying" placeholder="Enter output token CA">
+          <Form.Dropdown.Item value={SOL.address} title={SOL.name} icon={{ source: SOL.logoURI }} />
+          <Form.Dropdown.Item value={USDC.address} title={USDC.name} icon={{ source: USDC.logoURI }} />
+        </Form.Dropdown>
+      )}
+
+      <Form.TextField {...itemProps.makingAmount} title="Selling Amount" placeholder="Enter amount of selling token" />
+
+      <Form.Description
+        title=""
+        text={`Market price of ${secondaryTokenInfo?.name ?? "token"} is ${formatPrice(currentPrice)} ${priceUnit}`}
+      />
+
       <Form.TextField
-        id="outputMint"
-        title="Output Token Address"
-        placeholder="Enter output token CA"
-        defaultValue={props.arguments.outputMint}
+        {...itemProps.triggerPrice}
+        title={isInputMintSolOrUsdc ? "Buy when price is" : "Sell when price is"}
+        placeholder={
+          isInputMintSolOrUsdc
+            ? "Enter price of buying token at which you want to execute order"
+            : "Enter price of selling token at which you want to execute order"
+        }
       />
-      <Form.TextField
-        id="makingAmount"
-        title="Making Amount"
-        placeholder="Enter amount you're providing"
-        defaultValue={props.arguments.makingAmount}
+
+      <Form.Description
+        title=""
+        text={`Trade will be executed when ${
+          isInputMintSolOrUsdc ? "token you are buying" : "token you are selling"
+        } is at price ${triggerPriceValue} ${priceUnit}`}
       />
-      <Form.TextField id="takingAmount" title="Taking Amount" placeholder="Enter amount you want to receive" />
-      <Form.TextField id="slippageBps" title="Slippage BPS (Optional)" placeholder="Enter slippage in basis points" />
-      <Form.DatePicker type={Form.DatePicker.Type.DateTime} id="expiredAt" title="Expires At (Optional)" />
-      <Form.TextField id="feeBps" title="Fee BPS (Optional)" placeholder="Enter fee in basis points" />
-      {txHash && <Detail markdown={`[View on Solscan](https://solscan.io/tx/${txHash})`} />}
     </Form>
   );
 }

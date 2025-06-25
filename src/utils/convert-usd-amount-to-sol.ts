@@ -9,20 +9,12 @@ export const convertUsdAmountToSol = async ({ usdAmount }: ConvertUsdAmountToSol
     const result = await executeAction<number>("getSolPrice");
     const solPrice = result.data;
     if (!solPrice) {
-      return {
-        status: "error",
-        message: "Error retrieving SOL price",
-        error: "SOL price is not available",
-      };
+      throw new Error("SOL price is not available");
     }
     const solAmount = usdAmount / solPrice;
     return solAmount;
   } catch (error) {
     console.error(error);
-    return {
-      status: "error",
-      message: "Error retrieving SOL price",
-      error: error,
-    };
+    throw new Error("Error retrieving SOL price");
   }
 };

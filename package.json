@@ -110,6 +110,13 @@
       "description": "Create a DCA order",
       "mode": "view",
       "arguments": []
+    },
+    {
+      "name": "create-limit-order",
+      "title": "Create Limit Order",
+      "subtitle": "Send AI",
+      "description": "Create a limit order",
+      "mode": "view"
     }
   ],
   "tools": [

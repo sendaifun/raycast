@@ -1,101 +1,97 @@
-import { ActionPanel, Action, Form, showToast, Toast, LaunchProps, Detail } from "@raycast/api";
-import { useEffect, useState } from "react";
-import { executeAction } from "./utils/api-wrapper";
+import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { useState } from "react";
+import { executeAction, ApiParams } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
-import { withAccessToken } from "@raycast/utils";
+import { withAccessToken, useForm } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
+import { DCARequest, TokenInfo } from "./type";
+import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
 
-function CreateDCA(props: LaunchProps<{ arguments: { inputMint: string; outMint: string; inAmount: string } }>) {
+function CreateDCA() {
   const [isLoading, setIsLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (props.arguments.inputMint && props.arguments.outMint && props.arguments.inAmount) {
-      // Auto-submit if all required arguments are provided
-      // Note: This would need additional form values, so we'll let user fill the form
-    }
-  }, [props.arguments.inputMint, props.arguments.outMint, props.arguments.inAmount]);
+  const { handleSubmit, itemProps, reset } = useForm<DCARequest>({
+    async onSubmit(values) {
+      await handleCreateDCA(values);
+    },
+    validation: {
+      inputMint: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid input token address";
+        }
+      },
+      outputMint: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter a valid output token address";
+        }
+        if (!isValidSolanaAddress(value)) {
+          return "Please enter a valid output token address";
+        }
+      },
+      inAmount: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter an amount";
+        }
+        const amount = parseFloat(value);
+        if (isNaN(amount) || amount <= 0) {
+          return "Please enter a valid amount greater than 0";
+        }
+      },
+      numberOfOrders: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter number of orders";
+        }
+        const orders = parseInt(value);
+        if (isNaN(orders) || orders <= 1) {
+          return "Number of orders cannot be lower than 2";
+        }
+      },
+      interval: (value) => {
+        if (!value || value.trim() === "") {
+          return "Please enter an interval";
+        }
+        const intervalVal = parseInt(value);
+        if (isNaN(intervalVal) || intervalVal <= 0) {
+          return "Please enter a valid interval greater than 0";
+        }
+      },
+    },
+  });
 
-  async function handleSubmit(values: {
-    inputMint: string;
-    outMint: string;
-    inAmount: string;
-    numberOfOrders: string;
-    interval: string;
-    minPrice?: string;
-    maxPrice?: string;
-    startAt?: string;
-  }) {
+  async function handleCreateDCA(values: DCARequest) {
     try {
       setIsLoading(true);
 
-      const inAmount = parseFloat(values.inAmount);
+      const { data: tokenInfo } = await executeAction<TokenInfo>("getToken", {
+        inputMint: values.inputMint,
+      });
+
+      if (!tokenInfo) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Error",
+          message: "Token not found",
+        });
+        return;
+      }
+
+      const inputMintDecimals = tokenInfo.decimals;
+
+      const inAmount = (parseFloat(values.inAmount) * Math.pow(10, inputMintDecimals)).toFixed(0);
       const numberOfOrders = parseInt(values.numberOfOrders);
       const interval = parseInt(values.interval);
 
-      if (isNaN(inAmount) || inAmount <= 0) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid amount",
-          message: "Please enter a valid amount greater than 0",
-        });
-        return;
-      }
-
-      if (isNaN(numberOfOrders) || numberOfOrders <= 0) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid number of orders",
-          message: "Please enter a valid number of orders greater than 0",
-        });
-        return;
-      }
-
-      if (isNaN(interval) || interval <= 0) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid interval",
-          message: "Please enter a valid interval greater than 0",
-        });
-        return;
-      }
-
-      if (!isValidSolanaAddress(values.inputMint)) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid input token",
-          message: "Please enter a valid input token address",
-        });
-        return;
-      }
-
-      if (!isValidSolanaAddress(values.outMint)) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid output token",
-          message: "Please enter a valid output token address",
-        });
-        return;
-      }
-
-      const apiParams = {
+      const apiParams: ApiParams = {
         inputMint: values.inputMint,
-        outMint: values.outMint,
-        inAmount,
-        numberOfOrders,
-        interval,
+        outputMint: values.outputMint,
+        inputAmountAllocated: inAmount,
+        everyTime: interval,
+        everyUnit: "minute",
+        overOrder: numberOfOrders,
       };
 
-      // Only add optional parameters if they have values
-      if (values.minPrice) {
-        apiParams.minPrice = parseFloat(values.minPrice);
-      }
-      if (values.maxPrice) {
-        apiParams.maxPrice = parseFloat(values.maxPrice);
-      }
-      if (values.startAt) {
-        apiParams.startAt = parseInt(values.startAt);
-      }
+      console.log(apiParams);
 
       const result = await executeAction("createDCA", apiParams);
 
@@ -106,14 +102,13 @@ function CreateDCA(props: LaunchProps<{ arguments: { inputMint: string; outMint:
         title: "Success",
         message: `DCA strategy created successfully ${result.data?.toString()}`,
       });
-      return;
+      reset();
     } catch (error) {
       await showToast({
         style: Toast.Style.Failure,
         title: "Error",
         message: error instanceof Error ? error.message : "Failed to create DCA strategy",
       });
-      return;
     } finally {
       setIsLoading(false);
     }
@@ -131,37 +126,16 @@ function CreateDCA(props: LaunchProps<{ arguments: { inputMint: string; outMint:
         </ActionPanel>
       }
     >
-      <Form.TextField
-        id="inputMint"
-        title="Input Token Address"
+      <OwnedTokensDropdown
+        title="Selling"
         placeholder="Enter input token CA (e.g., SOL)"
-        defaultValue={props.arguments.inputMint}
+        itemProps={itemProps.inputMint}
       />
-      <Form.TextField
-        id="outMint"
-        title="Output Token Address"
-        placeholder="Enter output token CA"
-        defaultValue={props.arguments.outMint}
-      />
-      <Form.TextField
-        id="inAmount"
-        title="Amount per Order"
-        placeholder="Enter amount to spend per order"
-        defaultValue={props.arguments.inAmount}
-      />
-      <Form.TextField id="numberOfOrders" title="Number of Orders" placeholder="Enter total number of orders" />
-      <Form.TextField id="interval" title="Interval (seconds)" placeholder="Enter interval between orders in seconds" />
-      <Form.TextField id="minPrice" title="Min Price (Optional)" placeholder="Enter minimum price threshold" />
-      <Form.TextField id="maxPrice" title="Max Price (Optional)" placeholder="Enter maximum price threshold" />
-      <Form.DatePicker
-        onChange={(value) => {
-          console.log(value);
-        }}
-        type={Form.DatePicker.Type.DateTime}
-        id="startAt"
-        title="Start At (Optional)"
-      />
-      {txHash && <Detail markdown={`[View on Solscan](https://solscan.io/tx/${txHash})`} />}
+      <Form.TextField {...itemProps.outputMint} title="Buying" placeholder="Enter output token CA" />
+      <Form.TextField {...itemProps.inAmount} title="Allocate" placeholder="Enter amount to allocate" />
+      <Form.TextField {...itemProps.numberOfOrders} title="Over" placeholder="Enter total number of orders" />
+      <Form.TextField {...itemProps.interval} title="Every" placeholder="Enter interval between orders in minutes" />
+      {/* {txHash && <Detail markdown={`[View on Solscan](https://solscan.io/tx/${txHash})`} />} */}
     </Form>
   );
 }
