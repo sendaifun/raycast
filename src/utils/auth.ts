@@ -4,10 +4,10 @@ import { BACKEND_CALLBACK_URL, STORAGE_KEYS } from "./constants";
 
 const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.AppURI,
-  providerName: "Send AI",
+  providerName: "SendAI",
   providerIcon: "icon.png",
   providerId: "google",
-  description: "Connect your Google account to Send AI\n(Wallet powered by Privy)",
+  description: "Connect your Google account to SendAI\n(Wallet powered by Privy)",
 });
 
 const GOOGLE_CLIENT_ID = "12412930892-lglh33r17pqmobh28op3v9rv5nj9trbg.apps.googleusercontent.com";
@@ -116,7 +116,7 @@ async function fetchBackendToken(googleIdToken: string): Promise<string> {
   });
   const data = (await res.json()) as BackendAuthResponse;
   if (!data.token) {
-    throw new Error("Error fetching Send AI token");
+    throw new Error("Error fetching SendAI token");
   }
   await LocalStorage.setItem(STORAGE_KEYS.BACKEND_SESSION_TOKEN, data.token);
   return data.token;

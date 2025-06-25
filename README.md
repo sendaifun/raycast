@@ -2,7 +2,7 @@
 <img width=100 src="assets/icon@dark.png">
 </p>
 
-<h1 align="center">Send AI</h1>
+<h1 align="center">SendAI</h1>
 
 <h3 align="center">
 Interact with the Solana blockchain from Raycast using AI
@@ -12,7 +12,7 @@ Interact with the Solana blockchain from Raycast using AI
 
 # Overview
 
-Send AI is a Raycast extension that allows you to interact with the Solana blockchain using natural language commands. Manage your wallet, trade tokens, check portfolios, and perform various DeFi operations directly from Raycast.
+SendAI is a Raycast extension that allows you to interact with the Solana blockchain using natural language commands. Manage your wallet, trade tokens, check portfolios, and perform various DeFi operations directly from Raycast.
 
 # Commands
 
@@ -21,7 +21,7 @@ Send AI is a Raycast extension that allows you to interact with the Solana block
 - **Buy Token** - Purchase tokens using SOL
 - **Sell Token** - Sell your tokens for SOL
 - **Transfer SPL** - Transfer SPL tokens to another wallet address
-- **Get Wallet** - View your Send AI wallet information
+- **Get Wallet** - View your SendAI wallet information
 - **Get Portfolio** - View your complete token portfolio
 
 ## Token Information

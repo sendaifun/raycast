@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "send-ai",
-  "title": "Send AI",
-  "description": "Interact with the Send AI Agent from Raycast using AI",
+  "title": "SendAI",
+  "description": "Interact with the SendAI Agent from Raycast using AI",
   "icon": "icon.png",
   "author": "kanishq1",
   "contributors": [],
@@ -16,7 +16,7 @@
     {
       "name": "buy-token",
       "title": "Buy Token",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Buy a token",
       "mode": "view",
       "arguments": [
@@ -39,21 +39,21 @@
     {
       "name": "transfer-spl",
       "title": "Transfer Tokens",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Transfer SPL tokens to another wallet address. If user mentions the token address then use that address to transfer the token, if user mentions the token ticker then get the token info of that ticker and then transfer the token",
       "mode": "view"
     },
     {
       "name": "get-wallet",
       "title": "Wallet",
-      "subtitle": "Send AI",
-      "description": "Get your Send AI wallet",
+      "subtitle": "SendAI",
+      "description": "Get your SendAI wallet",
       "mode": "view"
     },
     {
       "name": "sell-token",
       "title": "Sell Token",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Sell a specific token",
       "mode": "view",
       "arguments": [
@@ -76,7 +76,7 @@
     {
       "name": "get-token-overview",
       "title": "Token Overview",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Get information about a specific token",
       "mode": "view",
       "arguments": [
@@ -92,21 +92,21 @@
     {
       "name": "get-trending-tokens",
       "title": "Trending Tokens",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Get list of trending tokens",
       "mode": "view"
     },
     {
       "name": "get-portfolio",
       "title": "Portfolio",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Get your token portfolio",
       "mode": "view"
     },
     {
       "name": "create-dca",
       "title": "Create DCA",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Create a DCA order",
       "mode": "view",
       "arguments": []
@@ -114,14 +114,14 @@
     {
       "name": "create-limit-order",
       "title": "Create Limit Order",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Create a limit order",
       "mode": "view"
     },
     {
       "name": "show-limit-orders",
       "title": "Show Limit Orders",
-      "subtitle": "Send AI",
+      "subtitle": "SendAI",
       "description": "Show all limit orders",
       "mode": "view"
     }
@@ -700,7 +700,7 @@
     "chat",
     "solana",
     "solana agent",
-    "send ai"
+    "SendAI"
   ],
   "preferences": [],
   "dependencies": {
