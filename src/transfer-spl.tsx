@@ -1,9 +1,10 @@
-import { ActionPanel, Action, Form, showToast, Toast, Image } from "@raycast/api";
-import { useState, useEffect } from "react";
+import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { useState } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken, useForm } from "@raycast/utils";
-import { PortfolioToken } from "./type";
+import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
+import { SOL_ADDRESS, WRAPPED_SOL_ADDRESS } from "./get-token-overview";
 
 interface FormValues {
   to: string;
@@ -13,8 +14,6 @@ interface FormValues {
 
 function TransferSPL() {
   const [isLoading, setIsLoading] = useState(false);
-  const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
-  const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(true);
   const [txHash, setTxHash] = useState<string | undefined>(undefined);
 
   const { handleSubmit, itemProps, reset } = useForm<FormValues>({
@@ -45,49 +44,25 @@ function TransferSPL() {
     },
   });
 
-  useEffect(() => {
-    loadPortfolio();
-  }, []);
-
-  async function loadPortfolio() {
-    try {
-      setIsLoadingPortfolio(true);
-      const result = await executeAction("getPortfolio");
-      const portfolioResult = result as { data: { items: PortfolioToken[] } };
-
-      if (
-        portfolioResult &&
-        portfolioResult.data &&
-        portfolioResult.data.items &&
-        Array.isArray(portfolioResult.data.items)
-      ) {
-        setPortfolioTokens(portfolioResult.data.items);
-      } else {
-        setPortfolioTokens([]);
-      }
-    } catch (error) {
-      console.error("Error loading portfolio:", error);
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Error",
-        message: "Failed to load portfolio data",
-      });
-      setPortfolioTokens([]);
-    } finally {
-      setIsLoadingPortfolio(false);
-    }
-  }
-
   async function handleTransfer(values: FormValues) {
     try {
       setIsLoading(true);
       const amount = parseFloat(values.amount);
 
-      const result = await executeAction<{ signature: string }>("transferSPL", {
-        to: values.to,
-        amount: amount,
-        mintAddress: values.mintAddress,
-      });
+      let result;
+
+      if (values.mintAddress === WRAPPED_SOL_ADDRESS || values.mintAddress === SOL_ADDRESS) {
+        result = await executeAction<{ signature: string }>("transfer", {
+          to: values.to,
+          amount: amount,
+        });
+      } else {
+        result = await executeAction<{ signature: string }>("transferSPL", {
+          to: values.to,
+          amount: amount,
+          mintAddress: values.mintAddress,
+        });
+      }
 
       if (result.status === "error") {
         await showToast({
@@ -105,7 +80,6 @@ function TransferSPL() {
       });
 
       setTxHash(result.data?.signature);
-      loadPortfolio();
     } catch (error) {
       await showToast({
         style: Toast.Style.Failure,
@@ -119,11 +93,10 @@ function TransferSPL() {
 
   return (
     <Form
-      isLoading={isLoading || isLoadingPortfolio}
+      isLoading={isLoading}
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Transfer SPL" onSubmit={handleSubmit} />
-          <Action title="Refresh Portfolio" onAction={loadPortfolio} />
+          <Action.SubmitForm title="Transfer Token" onSubmit={handleSubmit} />
         </ActionPanel>
       }
       searchBarAccessory={
@@ -131,21 +104,7 @@ function TransferSPL() {
       }
     >
       <Form.TextField {...itemProps.to} title="To Address" placeholder="Enter wallet address" />
-      <Form.Dropdown
-        {...itemProps.mintAddress}
-        title="Token"
-        placeholder="Select token from portfolio"
-        isLoading={isLoadingPortfolio}
-      >
-        {portfolioTokens.map((token) => (
-          <Form.Dropdown.Item
-            key={token.address}
-            value={token.address}
-            title={`${token.symbol} (Balance: ${token.uiAmount.toFixed(4)})`}
-            icon={{ source: token.logoURI, mask: Image.Mask.Circle }}
-          />
-        ))}
-      </Form.Dropdown>
+      <OwnedTokensDropdown title="Token" placeholder="Select token from portfolio" itemProps={itemProps.mintAddress} />
       <Form.TextField {...itemProps.amount} title="Amount" placeholder="Enter amount to transfer" />
     </Form>
   );

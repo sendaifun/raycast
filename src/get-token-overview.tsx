@@ -6,33 +6,10 @@ import { withAccessToken } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
 import { getPriceHistory } from "./utils/getPriceHistory";
 import BuyTokenForm from "./views/buy-token-form";
-import { RugcheckResult } from "./type";
+import { RugcheckResult, TokenInfo } from "./type";
 
-interface TokenInfo {
-  name: string;
-  decimals: number;
-  symbol: string;
-  address: string | number;
-  marketCap: number;
-  fdv: number;
-  price: number;
-  holder: number;
-  website?: string;
-  twitter?: string;
-  image?: string;
-  liquidity: number;
-  priceChange: {
-    "1 minute": number;
-    "1 hour": number;
-    "6 hours": number;
-    "30 minutes": number;
-    "12 hours": number;
-    "24 hours": number;
-  };
-}
-
-const SOL_ADDRESS = "So11111111111111111111111111111111111111111";
-const WRAPPED_SOL_ADDRESS = "So11111111111111111111111111111111111111112";
+export const SOL_ADDRESS = "So11111111111111111111111111111111111111111";
+export const WRAPPED_SOL_ADDRESS = "So11111111111111111111111111111111111111112";
 
 function formatNumber(num: number): string {
   if (num >= 1e9) {
@@ -305,7 +282,7 @@ function GetTokenOverview(props: LaunchProps<{ arguments: { tokenAddress: string
                     : Color.Red,
             }}
             icon={{
-              source: rugcheckData?.data.score === "Safe" ? "🟢" : rugcheckData?.data.score === "Warning" ? "🟡" : "🔴",
+              source: rugcheckData?.data.score === "safe" ? "🟢" : rugcheckData?.data.score === "warning" ? "🟡" : "🔴",
               mask: Image.Mask.Circle,
             }}
           />
