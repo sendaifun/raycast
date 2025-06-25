@@ -33,10 +33,14 @@ function BuyTokenForm(props: LaunchProps<{ arguments: { outputMint: string } }>)
         return;
       }
 
-      const result = await executeAction("buy", {
-        outputMint: values.outputMint,
-        inputAmount: inputAmount,
-      });
+      const result = await executeAction(
+        "buy",
+        {
+          outputMint: values.outputMint,
+          inputAmount: inputAmount,
+        },
+        false,
+      );
 
       setTxHash(result.data?.toString() ?? null);
 
