@@ -117,6 +117,13 @@
       "subtitle": "Send AI",
       "description": "Create a limit order",
       "mode": "view"
+    },
+    {
+      "name": "show-limit-orders",
+      "title": "Show Limit Orders",
+      "subtitle": "Send AI",
+      "description": "Show all limit orders",
+      "mode": "view"
     }
   ],
   "tools": [

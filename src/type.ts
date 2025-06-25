@@ -43,19 +43,29 @@ export interface LimitOrderParams {
 }
 
 export interface LimitOrder {
-  id: string;
-  maker: string;
+  userPubkey: string;
+  orderKey: string;
   inputMint: string;
   outputMint: string;
   makingAmount: string;
   takingAmount: string;
+  remainingMakingAmount: string;
+  remainingTakingAmount: string;
+  rawMakingAmount: string;
+  rawTakingAmount: string;
+  rawRemainingMakingAmount: string;
+  rawRemainingTakingAmount: string;
+  slippageBps: string;
+  slTakingAmount: string;
+  rawSlTakingAmount: string;
+  expiredAt: number | null;
+  createdAt: string;
+  updatedAt: string;
   status: string;
-  createdAt: number;
-  expiredAt?: number | null;
-  feeBps?: number | null;
-  slippageBps?: number | null;
-  filledMakingAmount?: string;
-  filledTakingAmount?: string;
+  openTx: string;
+  closeTx: string;
+  programVersion: string;
+  trades: unknown[];
 }
 
 export interface RugcheckResult {

@@ -1,131 +1,90 @@
-import { ActionPanel, Action, List, showToast, Toast, Color, Icon } from "@raycast/api";
-import { useState, useEffect } from "react";
+import { ActionPanel, Action, List, showToast, Toast, Color } from "@raycast/api";
+import { useState, useEffect, useMemo } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken } from "@raycast/utils";
-import { LimitOrder } from "./type";
-
-function formatAmount(amount: string): string {
-  const num = parseFloat(amount);
-  if (num >= 1e9) {
-    return (num / 1e9).toFixed(2) + "B";
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(2) + "M";
-  } else if (num >= 1e3) {
-    return (num / 1e3).toFixed(2) + "K";
-  }
-  return num.toFixed(4);
-}
+import { LimitOrder, TokenInfo } from "./type";
+import { USDC, WRAPPED_SOL_ADDRESS } from "./constants/tokenAddress";
 
 function formatAddress(address: string): string {
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 }
 
-function formatDate(timestamp: number): string {
-  return new Date(timestamp * 1000).toLocaleString();
-}
-
-function getStatusColor(status: string): Color {
-  switch (status.toLowerCase()) {
-    case "active":
-      return Color.Green;
-    case "filled":
-      return Color.Blue;
-    case "cancelled":
-      return Color.Red;
-    case "expired":
-      return Color.Orange;
-    default:
-      return Color.SecondaryText;
-  }
-}
-
-function getStatusIcon(status: string): Icon {
-  switch (status.toLowerCase()) {
-    case "active":
-      return Icon.Clock;
-    case "filled":
-      return Icon.CheckCircle;
-    case "cancelled":
-      return Icon.XMarkCircle;
-    case "expired":
-      return Icon.ExclamationMark;
-    default:
-      return Icon.Circle;
-  }
-}
-
 const LimitOrderDetailMetadata = ({ order }: { order: LimitOrder }) => {
+  const getTokenSymbol = async (mint: string) => {
+    try {
+      const result = await executeAction<TokenInfo>(
+        "getToken",
+        {
+          tokenId: mint,
+        },
+        true,
+        1000 * 60,
+      );
+      return result.data?.symbol;
+    } catch (error) {
+      console.error(error);
+      return formatAddress(mint);
+    }
+  };
+  const [inputMintSymbol, setInputMintSymbol] = useState<string | undefined>(undefined);
+  const [outputMintSymbol, setOutputMintSymbol] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    getTokenSymbol(order.inputMint).then(setInputMintSymbol);
+    getTokenSymbol(order.outputMint).then(setOutputMintSymbol);
+  }, [order.inputMint, order.outputMint]);
+
+  const isSelling = order.outputMint === WRAPPED_SOL_ADDRESS || order.outputMint === USDC.address;
+
+  const orderExecuteText = useMemo(() => {
+    if (isSelling) {
+      return `${(parseFloat(order.takingAmount) / parseFloat(order.makingAmount)).toFixed(8)} ${outputMintSymbol} per ${inputMintSymbol}`;
+    } else {
+      return `${(parseFloat(order.makingAmount) / parseFloat(order.takingAmount)).toFixed(8)} ${inputMintSymbol} per ${outputMintSymbol}`;
+    }
+  }, [order.takingAmount, order.makingAmount, inputMintSymbol, outputMintSymbol]);
+
   return (
     <List.Item.Detail.Metadata>
-      <List.Item.Detail.Metadata.Label title="Order ID" text={order.id} />
-      <List.Item.Detail.Metadata.Label title="Maker" text={order.maker} />
+      <List.Item.Detail.Metadata.Label title="Total Deposited" text={`${order.makingAmount} ${inputMintSymbol}`} />
+      <List.Item.Detail.Metadata.Label
+        title="Total Filled"
+        text={`${parseFloat(order.makingAmount) - parseFloat(order.remainingMakingAmount)}/${order.makingAmount} ${inputMintSymbol}`}
+      />
       <List.Item.Detail.Metadata.Separator />
-      <List.Item.Detail.Metadata.Label title="Input Token" text={order.inputMint} />
-      <List.Item.Detail.Metadata.Label title="Output Token" text={order.outputMint} />
+      <List.Item.Detail.Metadata.Label title="Order will execute at price" text={orderExecuteText} />
+      <List.Item.Detail.Metadata.Label
+        title={isSelling ? "You are selling" : "You are buying"}
+        text={!isSelling ? outputMintSymbol : inputMintSymbol}
+      />
       <List.Item.Detail.Metadata.Separator />
-      <List.Item.Detail.Metadata.Label title="Making Amount" text={order.makingAmount} />
-      <List.Item.Detail.Metadata.Label title="Taking Amount" text={order.takingAmount} />
-      <List.Item.Detail.Metadata.Separator />
-      <List.Item.Detail.Metadata.Label title="Status" text={order.status} />
-      <List.Item.Detail.Metadata.Label title="Created At" text={formatDate(order.createdAt)} />
-      {order.expiredAt && <List.Item.Detail.Metadata.Label title="Expires At" text={formatDate(order.expiredAt)} />}
-      <List.Item.Detail.Metadata.Separator />
-      {order.filledMakingAmount && (
-        <List.Item.Detail.Metadata.Label title="Filled Making Amount" text={order.filledMakingAmount} />
-      )}
-      {order.filledTakingAmount && (
-        <List.Item.Detail.Metadata.Label title="Filled Taking Amount" text={order.filledTakingAmount} />
-      )}
-      {order.feeBps && <List.Item.Detail.Metadata.Label title="Fee (BPS)" text={order.feeBps.toString()} />}
-      {order.slippageBps && (
-        <List.Item.Detail.Metadata.Label title="Slippage (BPS)" text={order.slippageBps.toString()} />
-      )}
     </List.Item.Detail.Metadata>
   );
-};
-
-const LimitOrderDetail = ({ order }: { order: LimitOrder }) => {
-  const markdownContent = `
-# Limit Order Details
-
-**Order ID:** ${order.id}
-
-**Status:** ${order.status}
-
-**Trading Pair:**
-- **Input:** ${formatAddress(order.inputMint)}
-- **Output:** ${formatAddress(order.outputMint)}
-
-**Amounts:**
-- **Making:** ${formatAmount(order.makingAmount)}
-- **Taking:** ${formatAmount(order.takingAmount)}
-
-${order.filledMakingAmount ? `**Filled Making:** ${formatAmount(order.filledMakingAmount)}` : ""}
-${order.filledTakingAmount ? `**Filled Taking:** ${formatAmount(order.filledTakingAmount)}` : ""}
-
-**Timeline:**
-- **Created:** ${formatDate(order.createdAt)}
-${order.expiredAt ? `- **Expires:** ${formatDate(order.expiredAt)}` : ""}
-  `;
-
-  return <List.Item.Detail metadata={<LimitOrderDetailMetadata order={order} />} markdown={markdownContent} />;
 };
 
 const ShowLimitOrders = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<LimitOrder[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<LimitOrder | null>(null);
+  const [orderTitles, setOrderTitles] = useState<{ [key: string]: string } | undefined>(undefined);
 
   useEffect(() => {
     loadLimitOrders();
   }, []);
 
-  async function loadLimitOrders() {
+  const loadLimitOrders = async () => {
     try {
       setIsLoading(true);
-      const result = await executeAction("showLimitOrders");
-      setOrders(result.data as LimitOrder[]);
+      const result = await executeAction<LimitOrder[]>("getLOs");
+      setOrders(result.data ?? []);
+      const orderTitles: { [key: string]: string } = {};
+      if (result.data) {
+        for (const order of result.data) {
+          orderTitles[order.orderKey] =
+            `${await getTokenSymbol(order.inputMint)} → ${await getTokenSymbol(order.outputMint)}`;
+        }
+      }
+      setOrderTitles(orderTitles);
     } catch (error) {
       console.error(error);
       await showToast({
@@ -136,82 +95,57 @@ const ShowLimitOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  async function cancelOrder(orderId: string) {
+  const getTokenSymbol = async (mint: string) => {
     try {
-      await executeAction("cancelLimitOrder", { orderId });
-      await showToast({
-        style: Toast.Style.Success,
-        title: "Success",
-        message: "Limit order cancelled successfully",
-      });
-      // Refresh the list
+      const result = await executeAction<TokenInfo>(
+        "getToken",
+        {
+          tokenId: mint,
+        },
+        true,
+        1000 * 60,
+      );
+      return result.data?.symbol;
+    } catch (error) {
+      console.error(error);
+      return formatAddress(mint);
+    }
+  };
+
+  const cancelLimitOrder = async (orderKey: string) => {
+    try {
+      await executeAction("cancelLO", { orderKey });
       await loadLimitOrders();
     } catch (error) {
       console.error(error);
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Error",
-        message: "Failed to cancel limit order",
-      });
     }
-  }
-
-  const getAccessories = (order: LimitOrder) => {
-    if (selectedOrder) {
-      return [
-        {
-          text: {
-            value: order.status,
-            color: getStatusColor(order.status),
-            icon: getStatusIcon(order.status),
-          },
-        },
-      ];
-    }
-    return [
-      { text: formatAmount(order.makingAmount) },
-      { text: "→" },
-      { text: formatAmount(order.takingAmount) },
-      {
-        text: {
-          value: order.status,
-          color: getStatusColor(order.status),
-          icon: getStatusIcon(order.status),
-        },
-      },
-    ];
   };
-
   return (
-    <List isLoading={isLoading} isShowingDetail={!!selectedOrder}>
-      {orders.map((order) => (
-        <List.Item
-          key={order.id}
-          title={`Order ${order.id.slice(0, 8)}...`}
-          subtitle={
-            !selectedOrder ? `${formatAddress(order.inputMint)} → ${formatAddress(order.outputMint)}` : undefined
-          }
-          detail={<LimitOrderDetail order={order} />}
-          accessories={getAccessories(order)}
-          actions={
-            <ActionPanel>
-              {!selectedOrder && <Action title="Show Details" onAction={() => setSelectedOrder(order)} />}
-              {selectedOrder && <Action title="Hide Details" onAction={() => setSelectedOrder(null)} />}
-              {order.status.toLowerCase() === "active" && (
-                <Action
-                  title="Cancel Order"
-                  style={Action.Style.Destructive}
-                  onAction={() => cancelOrder(order.id)}
-                  shortcut={{ modifiers: ["cmd"], key: "delete" }}
+    <List isLoading={isLoading} isShowingDetail>
+      {orders.map((order) => {
+        return (
+          <List.Item
+            key={order.orderKey}
+            title={orderTitles?.[order.orderKey] ?? formatAddress(order.inputMint)}
+            // subtitle={`Total Filled: ${parseFloat(order.makingAmount) - parseFloat(order.remainingMakingAmount)}/${order.makingAmount} ${getTokenSymbol(order.outputMint)}`}
+            detail={<List.Item.Detail metadata={<LimitOrderDetailMetadata order={order} />} />}
+            accessories={[{ text: { value: order.status, color: Color.Green } }]}
+            actions={
+              <ActionPanel>
+                <Action.OpenInBrowser
+                  title="View on Solscan"
+                  url={`https://solscan.io/tx/${order.openTx}`}
+                  shortcut={{ modifiers: ["cmd"], key: "o" }}
                 />
-              )}
-              <Action title="Refresh" onAction={loadLimitOrders} shortcut={{ modifiers: ["cmd"], key: "r" }} />
-            </ActionPanel>
-          }
-        />
-      ))}
+                <Action title="Cancel" onAction={() => cancelLimitOrder(order.orderKey)} />
+                <Action title="Refresh" onAction={loadLimitOrders} shortcut={{ modifiers: ["cmd"], key: "r" }} />
+              </ActionPanel>
+            }
+          />
+        );
+      })}
     </List>
   );
 };
