@@ -3,7 +3,7 @@ import { useState } from "react";
 import { executeAction } from "./utils/api-wrapper";
 import { provider } from "./utils/auth";
 import { withAccessToken, useForm } from "@raycast/utils";
-import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
+import { OwnedTokensDropdown } from "./components/owned-tokens-dropdown";
 import { SOL_ADDRESS, WRAPPED_SOL_ADDRESS } from "./get-token-overview";
 
 interface FormValues {

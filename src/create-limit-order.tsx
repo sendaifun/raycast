@@ -5,7 +5,7 @@ import { provider } from "./utils/auth";
 import { withAccessToken, useForm } from "@raycast/utils";
 import { isValidSolanaAddress } from "./utils/is-valid-address";
 import { LimitOrderRequest, TokenInfo } from "./type";
-import { OwnedTokensDropdown } from "./components/OwnedTokensDropdown";
+import { OwnedTokensDropdown } from "./components/owned-tokens-dropdown";
 import { SOL, USDC, WRAPPED_SOL_ADDRESS } from "./constants/tokenAddress";
 import { convertUsdAmountToSol } from "./utils/convert-usd-amount-to-sol";
 
