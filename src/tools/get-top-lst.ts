@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async () => {
   try {
-    console.log("getting top LST tokens");
     const result = await executeAction("getTopLST");
     return {
       status: "success",

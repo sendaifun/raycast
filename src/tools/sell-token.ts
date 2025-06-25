@@ -10,7 +10,6 @@ export default withAccessToken(provider)(async ({
   inputMint: string;
 }) => {
   try {
-    console.log("selling token", inputMint, inputAmount);
     const result = await executeAction("sell", {
       inputAmount: parseFloat(inputAmount),
       inputMint: inputMint,

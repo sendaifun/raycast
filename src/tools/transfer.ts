@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ to, amount }: { to: string; amount: string }) => {
   try {
-    console.log("transferring SOL", to, amount);
     const result = await executeAction("transfer", {
       to: to,
       amount: parseFloat(amount),

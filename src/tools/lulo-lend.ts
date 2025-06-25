@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ amount }: { amount: number }) => {
   try {
-    console.log("lending tokens", amount);
     const result = await executeAction("luloLend", {
       amount: amount,
     });

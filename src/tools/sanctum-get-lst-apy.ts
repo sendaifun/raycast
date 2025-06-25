@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ inputs }: { inputs: string[] }) => {
   try {
-    console.log("getting Sanctum LST APY", inputs);
     const result = await executeAction("sanctumGetLSTAPY", {
       inputs: inputs,
     });

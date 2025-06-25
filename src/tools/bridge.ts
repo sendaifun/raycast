@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ amount }: { amount: string }) => {
   try {
-    console.log("generating bridge URL", amount);
     const result = await executeAction("bridge", {
       amount: parseFloat(amount),
     });

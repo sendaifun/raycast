@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async () => {
   try {
-    console.log("getting Lulo APY");
     const result = await executeAction("luloGetApy");
     return {
       status: "success",
@@ -12,7 +11,6 @@ export default withAccessToken(provider)(async () => {
       result: result,
     };
   } catch (error) {
-    console.error(error);
     return {
       status: "error",
       message: "Error retrieving Lulo APY",

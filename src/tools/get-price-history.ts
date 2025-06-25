@@ -4,7 +4,6 @@ import { getPriceHistory } from "../utils/getPriceHistory";
 
 export default withAccessToken(provider)(async ({ tokenId }: { tokenId: string }) => {
   try {
-    console.log("fetching price for token", tokenId);
     const result = await getPriceHistory({
       address: tokenId,
       timeFrom: Math.floor(new Date(Date.now() - 1000 * 60 * 60 * 24).getTime() / 1000),

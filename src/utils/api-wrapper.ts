@@ -55,7 +55,6 @@ export async function executeAction<T>(
     // Try to get cached result first
     cachedResult = cache.get<ApiResponse<T>>();
     if (cachedResult) {
-      console.log(`Return Cached result for ${method}`);
       return cachedResult;
     }
   }
@@ -86,7 +85,6 @@ export async function executeAction<T>(
       const cacheTime = cacheTimeMs || 2 * 60 * 1000; // Default to 2 minutes if not specified
       if (response.data.status === "success") {
         cache.set(response.data, cacheTime);
-        // console.log(`Cached result for ${method} (${cacheTime} ms)`);
       }
     }
 
@@ -95,7 +93,7 @@ export async function executeAction<T>(
     // Handle axios errors which contain backend response
     if (axios.isAxiosError(error) && error.response?.data) {
       const backendError = error.response.data;
-      console.log(backendError);
+      console.error(backendError);
       // If backend sent an error response, use its message
       if (backendError.status === "error" && backendError.message) {
         throw new Error(backendError.message);

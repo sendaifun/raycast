@@ -6,7 +6,6 @@ import { convertUsdAmountToSol } from "../utils/convert-usd-amount-to-sol";
 
 export default withAccessToken(provider)(async ({ tokenId }: { tokenId: string }) => {
   try {
-    console.log("fetching price for token", tokenId);
     const result = await executeAction(
       "fetchPrice",
       {

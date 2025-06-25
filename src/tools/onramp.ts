@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ amount }: { amount?: number }) => {
   try {
-    console.log("getting onramp URL", amount);
     const params: Record<string, number> = {};
     if (amount) params.amount = amount;
 

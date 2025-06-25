@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ mint }: { mint: string }) => {
   try {
-    console.log("checking rug for token", mint);
     const result = await executeAction("rugcheck", {
       mint: mint,
     });

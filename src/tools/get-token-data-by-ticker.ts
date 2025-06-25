@@ -4,7 +4,6 @@ import { provider } from "../utils/auth";
 
 export default withAccessToken(provider)(async ({ ticker }: { ticker: string }) => {
   try {
-    console.log("getting token data by ticker", ticker);
     const result = await executeAction(
       "getTokenDataByTicker",
       {

@@ -44,7 +44,7 @@ export async function getPriceHistory({
     // Handle axios errors which contain backend response
     if (axios.isAxiosError(error) && error.response?.data) {
       const backendError = error.response.data;
-      console.log(backendError);
+      console.error(backendError);
       // If backend sent an error response, use its message
       if (backendError.status === "error" && backendError.message) {
         throw new Error(backendError.message);
