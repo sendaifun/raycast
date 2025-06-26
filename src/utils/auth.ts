@@ -2,6 +2,7 @@ import { LocalStorage, OAuth } from "@raycast/api";
 import { BackendAuthResponse } from "../type";
 import { BACKEND_CALLBACK_URL, STORAGE_KEYS } from "./constants";
 import { CacheAdapter } from "./cache";
+import { URL_ENDPOINTS } from "../constants/endpoints";
 
 const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.AppURI,
@@ -46,7 +47,7 @@ export const provider = {
 
     // No valid tokens, start new auth flow
     const authRequest = await client.authorizationRequest({
-      endpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+      endpoint: URL_ENDPOINTS.GOOGLE_AUTH_URL,
       clientId: GOOGLE_CLIENT_ID,
       scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
     });
@@ -83,7 +84,7 @@ async function fetchTokens(authRequest: OAuth.AuthorizationRequest, authCode: st
   params.append("grant_type", "authorization_code");
   params.append("redirect_uri", authRequest.redirectURI);
 
-  const response = await fetch("https://oauth2.googleapis.com/token", { method: "POST", body: params });
+  const response = await fetch(URL_ENDPOINTS.GOOGLE_TOKEN_URL, { method: "POST", body: params });
   if (!response.ok) {
     const responseText = await response.text();
     console.error("fetch tokens error:", responseText);
@@ -99,7 +100,7 @@ async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse>
   params.append("refresh_token", refreshToken);
   params.append("grant_type", "refresh_token");
 
-  const response = await fetch("https://oauth2.googleapis.com/token", { method: "POST", body: params });
+  const response = await fetch(URL_ENDPOINTS.GOOGLE_TOKEN_URL, { method: "POST", body: params });
   if (!response.ok) {
     const responseText = await response.text();
     console.error("refresh tokens error:", responseText);
