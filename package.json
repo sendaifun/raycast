@@ -2,14 +2,15 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "send-ai",
   "title": "SendAI",
-  "description": "Interact with the SendAI Agent from Raycast using AI",
+  "description": "Your shortcut to everything Solana. At your command bar.",
   "icon": "icon.png",
-  "author": "kanishq1",
+  "author": "sendai",
   "contributors": [],
-  "categories": [
+  "categories": [    
     "Productivity",
     "Finance",
-    "Other"
+    "Web",
+    "Data"
   ],
   "license": "MIT",
   "commands": [
