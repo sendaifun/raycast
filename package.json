@@ -5,8 +5,10 @@
   "description": "Your shortcut to everything Solana. At your command bar.",
   "icon": "icon.png",
   "author": "sendai",
-  "contributors": [],
-  "categories": [    
+  "contributors": [
+    "kanishq_khandelwal"
+  ],
+  "categories": [
     "Productivity",
     "Finance",
     "Web",
