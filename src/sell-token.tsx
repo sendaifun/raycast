@@ -1,62 +1,52 @@
-import { ActionPanel, Action, Form, showToast, Toast, LaunchProps } from "@raycast/api";
+import { ActionPanel, Action, Form, showToast, LaunchProps } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { executeAction } from "./utils/api-wrapper";
-import { provider } from "./utils/auth";
+import { executeAction, provider, createErrorToast, createSuccessToast } from "./utils";
 import { withAccessToken } from "@raycast/utils";
 
-function SellToken(props: LaunchProps<{ arguments: { inputMint: string; inputAmount: string } }>) {
+interface SellTokenFormValues {
+  inputMint: string;
+  inputAmount: string;
+}
+
+function SellToken(props: LaunchProps<{ arguments: SellTokenFormValues }>) {
   const [isLoading, setIsLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
   useEffect(() => {
-    if (props.arguments.inputMint && props.arguments.inputAmount) {
-      handleSubmit({ inputMint: props.arguments.inputMint, inputAmount: props.arguments.inputAmount });
+    const { inputMint, inputAmount } = props.arguments;
+    if (inputMint && inputAmount) {
+      handleSubmit({ inputMint, inputAmount });
     }
   }, [props.arguments.inputMint, props.arguments.inputAmount]);
 
-  async function handleSubmit(values: { inputMint: string; inputAmount: string }) {
+  async function handleSubmit(values: SellTokenFormValues) {
     try {
       setIsLoading(true);
       const inputAmount = parseFloat(values.inputAmount);
 
+      // Validation
       if (isNaN(inputAmount) || inputAmount <= 0) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid amount",
-          message: "Please enter a valid amount greater than 0",
-        });
+        await showToast(createErrorToast("Invalid amount", "Please enter a valid amount greater than 0"));
         return;
       }
 
       if (!values.inputMint || values.inputMint.trim() === "") {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Invalid token address",
-          message: "Please enter a valid token mint address",
-        });
+        await showToast(createErrorToast("Invalid token address", "Please enter a valid token mint address"));
         return;
       }
 
+      // Execute transaction
       const result = await executeAction("sell", {
-        inputAmount: inputAmount,
+        inputAmount,
         inputMint: values.inputMint,
       });
 
-      setTxHash(result.data?.toString() ?? null);
+      const transactionHash = result.data?.toString() ?? null;
+      setTxHash(transactionHash);
 
-      await showToast({
-        style: Toast.Style.Success,
-        title: "Success",
-        message: `Token sale executed successfully`,
-      });
-      return;
+      await showToast(createSuccessToast("Success", "Token sale executed successfully"));
     } catch (error) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Error",
-        message: error instanceof Error ? error.message : "Failed to execute token sale",
-      });
-      return;
+      await showToast(createErrorToast("Error", error, "Failed to execute token sale"));
     } finally {
       setIsLoading(false);
     }

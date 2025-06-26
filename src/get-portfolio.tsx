@@ -1,7 +1,6 @@
-import { ActionPanel, Action, List, showToast, Toast, Image } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Image } from "@raycast/api";
 import { useState, useEffect } from "react";
-import { executeAction } from "./utils/api-wrapper";
-import { provider } from "./utils/auth";
+import { executeAction, provider, createErrorToast, formatNumber, formatTokenBalance } from "./utils";
 import { withAccessToken } from "@raycast/utils";
 import { PortfolioToken } from "./type";
 import GetTokenOverview from "./get-token-overview";
@@ -10,17 +9,6 @@ interface PortfolioData {
   wallet: string;
   totalUsd: number;
   items: PortfolioToken[];
-}
-
-function formatNumber(num: number): string {
-  if (num >= 1e9) {
-    return (num / 1e9).toFixed(2) + "B";
-  } else if (num >= 1e6) {
-    return (num / 1e6).toFixed(2) + "M";
-  } else if (num >= 1e3) {
-    return (num / 1e3).toFixed(2) + "K";
-  }
-  return num.toFixed(2);
 }
 
 function GetPortfolio() {
@@ -38,11 +26,7 @@ function GetPortfolio() {
       const portfolioResult = result as { data: PortfolioData };
       setPortfolio(portfolioResult.data);
     } catch (error) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Error",
-        message: error instanceof Error ? error.message : "Failed to load portfolio",
-      });
+      await showToast(createErrorToast("Error", error, "Failed to load portfolio"));
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +52,7 @@ function GetPortfolio() {
               title={token.symbol}
               subtitle={token.name}
               accessories={[
-                { text: `${token.uiAmount.toFixed(4)} ${token.symbol}` },
+                { text: formatTokenBalance(token.uiAmount, token.symbol) },
                 { text: `$${formatNumber(token.valueUsd)}` },
               ]}
               icon={{ source: token.logoURI, mask: Image.Mask.Circle }}

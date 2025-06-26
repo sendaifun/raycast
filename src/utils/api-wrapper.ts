@@ -15,20 +15,17 @@ export interface ApiParams {
   [key: string]: string | number | string[] | PublicKey;
 }
 
-// Helper function to create a cache key from method and params
+/**
+ * Creates a cache key from method and params for consistent caching
+ */
 function createCacheKey(method: string, params: ApiParams): string {
-  // Convert params to a stable string representation
   const sortedParams = Object.keys(params)
     .sort()
     .reduce(
       (result, key) => {
         const value = params[key];
         // Handle PublicKey serialization
-        if (value instanceof PublicKey) {
-          result[key] = value.toString();
-        } else {
-          result[key] = value;
-        }
+        result[key] = value instanceof PublicKey ? value.toString() : value;
         return result;
       },
       {} as Record<string, unknown>,
@@ -37,37 +34,38 @@ function createCacheKey(method: string, params: ApiParams): string {
   return `api_${method}_${JSON.stringify(sortedParams)}`;
 }
 
+/**
+ * Executes an API action with optional caching
+ */
 export async function executeAction<T>(
   method: string,
   params: ApiParams = {},
-  useCache: boolean = false,
+  useCache = false,
   cacheTimeMs?: number,
 ): Promise<ApiResponse<T>> {
-  let cachedResult: ApiResponse<T> | null = null;
   let cache: CacheAdapter | null = null;
 
-  // Only use cache if explicitly enabled
+  // Handle caching if enabled
   if (useCache) {
-    // Create cache key and check for cached result
     const cacheKey = createCacheKey(method, params);
     cache = new CacheAdapter(cacheKey);
 
-    // Try to get cached result first
-    cachedResult = cache.get<ApiResponse<T>>();
+    const cachedResult = cache.get<ApiResponse<T>>();
     if (cachedResult) {
       return cachedResult;
     }
   }
 
   try {
-    // TODO: if aunauthorised request from backend, throw error
     const token = await LocalStorage.getItem<string>(STORAGE_KEYS.BACKEND_SESSION_TOKEN);
+
+    if (!token) {
+      throw new Error("Authentication token not found. Please sign in again.");
+    }
+
     const response = await axios.post<ApiResponse<T>>(
       `${URL_ENDPOINTS.SEND_AI_API_URL}/execute.action`,
-      {
-        method,
-        params,
-      },
+      { method, params },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -75,36 +73,46 @@ export async function executeAction<T>(
       },
     );
 
-    // If the response indicates an error, throw it so it can be caught by components
+    // Handle error responses from the API
     if (response.data.status === "error") {
       throw new Error(response.data.message || "API request failed");
     }
 
-    // Cache the successful result only if caching is enabled
-    if (useCache && cache) {
-      const cacheTime = cacheTimeMs || 2 * 60 * 1000; // Default to 2 minutes if not specified
-      if (response.data.status === "success") {
-        cache.set(response.data, cacheTime);
-      }
+    // Cache successful results if caching is enabled
+    if (useCache && cache && response.data.status === "success") {
+      const cacheTime = cacheTimeMs || 2 * 60 * 1000; // Default 2 minutes
+      cache.set(response.data, cacheTime);
     }
 
     return response.data;
   } catch (error) {
-    // Handle axios errors which contain backend response
-    if (axios.isAxiosError(error) && error.response?.data) {
-      const backendError = error.response.data;
-      console.error(backendError);
-      // If backend sent an error response, use its message
-      if (backendError.status === "error" && backendError.message) {
+    // Handle axios errors with backend responses
+    if (axios.isAxiosError(error)) {
+      const backendError = error.response?.data;
+
+      if (backendError?.status === "error" && backendError.message) {
         throw new Error(backendError.message);
       }
-      // If backend sent a different error format, try to extract message
-      if (backendError.message) {
+
+      if (backendError?.message) {
         throw new Error(backendError.message);
+      }
+
+      // Handle specific HTTP status codes
+      if (error.response?.status === 401) {
+        throw new Error("Authentication failed. Please sign in again.");
+      }
+
+      if (error.response?.status && error.response.status >= 500) {
+        throw new Error("Server error. Please try again later.");
       }
     }
 
-    // create a new Error with a generic message
-    throw new Error("Unknown error occurred");
+    // Preserve original error message if it's already an Error
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("An unexpected error occurred");
   }
 }

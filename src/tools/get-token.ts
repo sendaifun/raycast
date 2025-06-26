@@ -1,28 +1,39 @@
 import { withAccessToken } from "@raycast/utils";
-import { executeAction } from "../utils/api-wrapper";
-import { provider } from "../utils/auth";
+import { executeAction, provider } from "../utils";
 
-export default withAccessToken(provider)(async ({ tokenAddress }: { tokenAddress: string }) => {
+interface GetTokenParams {
+  tokenAddress: string;
+}
+
+export default withAccessToken(provider)(async ({ tokenAddress }: GetTokenParams) => {
   try {
+    // Validate input
+    if (!tokenAddress || tokenAddress.trim() === "") {
+      return {
+        status: "error",
+        message: "Token address is required",
+        error: null,
+      };
+    }
+
     const result = await executeAction(
       "getToken",
-      {
-        address: tokenAddress,
-      },
+      { address: tokenAddress },
       true,
-      1000 * 60,
+      60 * 1000, // 1 minute cache
     );
+
     return {
       status: "success",
       message: "Token data retrieved successfully",
-      result: result,
+      result,
     };
   } catch (error) {
-    console.error(error);
+    console.error("Get token error:", error);
     return {
       status: "error",
-      message: "Error retrieving token data",
-      error: error,
+      message: error instanceof Error ? error.message : "Error retrieving token data",
+      error,
     };
   }
 });

@@ -1,9 +1,8 @@
-import { ActionPanel, Action, Form, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Form, showToast } from "@raycast/api";
 import { useState } from "react";
-import { executeAction, ApiParams } from "./utils/api-wrapper";
-import { provider } from "./utils/auth";
+import { executeAction, ApiParams, provider, createErrorToast, createSuccessToast } from "./utils";
 import { withAccessToken, useForm } from "@raycast/utils";
-import { isValidSolanaAddress } from "./utils/is-valid-address";
+import { validateTokenAddress, validateNumberInput, validateIntegerInput } from "./utils/validation";
 import { DCARequest } from "./type";
 import { OwnedTokensDropdown } from "./components/owned-tokens-dropdown";
 import { SOL, WRAPPED_SOL_ADDRESS } from "./constants/tokenAddress";
@@ -17,46 +16,11 @@ function CreateDCA() {
       await handleCreateDCA(values);
     },
     validation: {
-      inputMint: (value) => {
-        if (!value || value.trim() === "") {
-          return "Please enter a valid input token address";
-        }
-      },
-      outputMint: (value) => {
-        if (!value || value.trim() === "") {
-          return "Please enter a valid output token address";
-        }
-        if (!isValidSolanaAddress(value)) {
-          return "Please enter a valid output token address";
-        }
-      },
-      inAmount: (value) => {
-        if (!value || value.trim() === "") {
-          return "Please enter an amount";
-        }
-        const amount = parseFloat(value);
-        if (isNaN(amount) || amount <= 0) {
-          return "Please enter a valid amount greater than 0";
-        }
-      },
-      numberOfOrders: (value) => {
-        if (!value || value.trim() === "") {
-          return "Please enter number of orders";
-        }
-        const orders = parseInt(value);
-        if (isNaN(orders) || orders <= 1) {
-          return "Number of orders cannot be lower than 2";
-        }
-      },
-      interval: (value) => {
-        if (!value || value.trim() === "") {
-          return "Please enter an interval";
-        }
-        const intervalVal = parseInt(value);
-        if (isNaN(intervalVal) || intervalVal <= 0) {
-          return "Please enter a valid interval greater than 0";
-        }
-      },
+      inputMint: validateTokenAddress,
+      outputMint: validateTokenAddress,
+      inAmount: (value) => validateNumberInput(value, "amount"),
+      numberOfOrders: (value) => validateIntegerInput(value, "number of orders", 2),
+      interval: (value) => validateIntegerInput(value, "interval", 1),
     },
   });
 
@@ -71,8 +35,8 @@ function CreateDCA() {
       const interval = parseInt(values.interval);
 
       const apiParams: ApiParams = {
-        inputMint: inputMint,
-        outputMint: outputMint,
+        inputMint,
+        outputMint,
         inputAmountAllocated: values.inAmount,
         everyTime: interval,
         everyUnit: "minute",
@@ -81,20 +45,19 @@ function CreateDCA() {
 
       const result = await executeAction("createDCA", apiParams, false);
 
-      setTxHash(result.data?.toString() ?? null);
+      const transactionHash = result.data?.toString() ?? null;
+      setTxHash(transactionHash);
 
-      await showToast({
-        style: Toast.Style.Success,
-        title: "Success",
-        message: `DCA strategy created successfully ${result.data?.toString()}`,
-      });
+      await showToast(
+        createSuccessToast(
+          "Success",
+          `DCA strategy created successfully${transactionHash ? ` - ${transactionHash}` : ""}`,
+        ),
+      );
+
       reset();
     } catch (error) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Error",
-        message: error instanceof Error ? error.message : "Failed to create DCA strategy",
-      });
+      await showToast(createErrorToast("Error", error, "Failed to create DCA strategy"));
     } finally {
       setIsLoading(false);
     }
@@ -121,7 +84,6 @@ function CreateDCA() {
       <Form.TextField {...itemProps.inAmount} title="Allocate" placeholder="Enter amount to allocate" />
       <Form.TextField {...itemProps.numberOfOrders} title="Over" placeholder="Enter total number of orders" />
       <Form.TextField {...itemProps.interval} title="Every" placeholder="Enter interval between orders in minutes" />
-      {/* {txHash && <Detail markdown={`[View on Solscan](https://solscan.io/tx/${txHash})`} />} */}
     </Form>
   );
 }

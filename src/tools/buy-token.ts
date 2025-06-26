@@ -1,30 +1,47 @@
 import { withAccessToken } from "@raycast/utils";
-import { executeAction } from "../utils/api-wrapper";
-import { provider } from "../utils/auth";
+import { executeAction, provider } from "../utils";
 
-export default withAccessToken(provider)(async ({
-  outputMint,
-  inputAmount,
-}: {
+interface BuyTokenParams {
   outputMint: string;
   inputAmount: string;
-}) => {
+}
+
+export default withAccessToken(provider)(async ({ outputMint, inputAmount }: BuyTokenParams) => {
   try {
+    // Validate inputs
+    const amount = parseFloat(inputAmount);
+    if (isNaN(amount) || amount <= 0) {
+      return {
+        status: "error",
+        message: "Invalid amount: must be a positive number",
+        error: null,
+      };
+    }
+
+    if (!outputMint || outputMint.trim() === "") {
+      return {
+        status: "error",
+        message: "Invalid token address: outputMint is required",
+        error: null,
+      };
+    }
+
     const result = await executeAction("buy", {
-      outputMint: outputMint,
-      inputAmount: parseFloat(inputAmount).toFixed(8),
+      outputMint,
+      inputAmount: amount.toFixed(8),
     });
+
     return {
       status: "success",
       message: "Trade executed successfully",
-      result: result,
+      result,
     };
   } catch (error) {
-    console.error(error);
+    console.error("Buy token error:", error);
     return {
       status: "error",
-      message: "Error executing trade",
-      error: error,
+      message: error instanceof Error ? error.message : "Error executing trade",
+      error,
     };
   }
 });
