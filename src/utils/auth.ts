@@ -1,6 +1,7 @@
 import { LocalStorage, OAuth } from "@raycast/api";
 import { BackendAuthResponse } from "../type";
 import { BACKEND_CALLBACK_URL, STORAGE_KEYS } from "./constants";
+import { CacheAdapter } from "./cache";
 
 const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.AppURI,
@@ -67,6 +68,10 @@ export const provider = {
   signOut: async () => {
     await client.removeTokens();
     await LocalStorage.removeItem(STORAGE_KEYS.BACKEND_SESSION_TOKEN);
+
+    // Clear all cached data
+    const cache = new CacheAdapter("temp"); // Create a temporary instance to access the cache
+    cache.clear();
   },
 };
 
