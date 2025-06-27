@@ -5,6 +5,7 @@
   "description": "Your shortcut to everything Solana. At your command bar.",
   "icon": "icon.png",
   "author": "sendai",
+  "owner": "sendai",
   "contributors": [
     "kanishq_khandelwal"
   ],
@@ -20,7 +21,7 @@
       "name": "buy-token",
       "title": "Buy Token",
       "subtitle": "SendAI",
-      "description": "Buy a token",
+      "description": "Buy a specific token",
       "mode": "view",
       "arguments": [
         {
@@ -191,10 +192,8 @@
         "send tokens",
         "transfer tokens",
         "transfer spl token",
-        "transfer spl token to another address",
-        "transfer spl token to another wallet",
-        "transfer spl token to another wallet address",
-        "transfer spl token to another wallet address which is a solana public key",
+        "spl token to wallet",
+        "spl token to address",
         "transfer",
         "spl",
         "token",
@@ -243,7 +242,6 @@
       "description": "Get the token data for a given token ticker or symbol",
       "keywords": [
         "token data by ticker",
-        "fetch token info by ticker",
         "lookup token ticker info",
         "get token info by ticker",
         "get token data by ticker",
@@ -340,7 +338,6 @@
         "buy crypto",
         "buy sol",
         "buy solana",
-        "onramp",
         "purchase crypto",
         "add funds",
         "fund wallet",
@@ -349,7 +346,6 @@
         "deposit crypto",
         "onramp",
         "fiat",
-        "buy",
         "deposit"
       ]
     },
@@ -359,7 +355,7 @@
       "description": "Get current APY rates from Lulo protocol for a given SPL token (defaults to USDC).",
       "keywords": [
         "get APY from lulo",
-        "what is the lulo APY for USDC?",
+        "what is the lulo APY",
         "fetch lulo APY rates",
         "lulo",
         "apy",
@@ -396,7 +392,7 @@
         "top liquid staking tokens",
         "top LSTs by volume",
         "top 10 LST tokens",
-        "top LST tokens by daily volume",
+        "top LST by daily volume",
         "lst",
         "liquid",
         "staking",
