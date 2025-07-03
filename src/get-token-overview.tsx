@@ -121,7 +121,7 @@ function GetTokenOverview(props: LaunchProps<{ arguments: { tokenAddress: string
         const { data } = await executeAction(
           "getTokenDataByTicker",
           {
-            ticker: values.tokenAddress,
+            ticker: values.tokenAddress, // this is the token symbol
           },
           true,
           1000 * 60 * 60,
