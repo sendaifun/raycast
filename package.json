@@ -64,15 +64,13 @@
           "name": "inputMint",
           "type": "text",
           "title": "Token Address",
-          "placeholder": "enter token address",
-          "required": true
+          "placeholder": "enter token address"
         },
         {
           "name": "inputAmount",
           "type": "text",
           "title": "Amount",
-          "placeholder": "enter number of tokens",
-          "required": true
+          "placeholder": "enter number of tokens"
         }
       ]
     },
