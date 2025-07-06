@@ -26,7 +26,7 @@ ${launchData.website ? `- **Website:** ${launchData.website}` : ""}
 
 View on Jup: https://jup.ag/tokens/${mintAddress}
 
-You can claim your creator fee on SendShot: https://sendshot.io/claim-creator-fee
+You can claim your creator fee on SendShot: https://sendshot.fun
 `;
 };
 
