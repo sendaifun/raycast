@@ -82,6 +82,8 @@ ${balance} SOL
 
 [View Wallet on Solscan](https://solscan.io/account/${walletAddress})
 
+[Export Wallet](https://portfolio.sendai.fun)
+
 ---
 
 `
