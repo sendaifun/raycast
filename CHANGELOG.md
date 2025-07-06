@@ -7,4 +7,5 @@ Introducing SendAI Agent for Raycast. Interact with Solana blockchain straight f
 ## [0.0.2] - July, 6 2025
 
 - Added a new command to launch a token on SendShot
+- Added a new command to view transaction history
 - UX improvements to allow users to sell tokens
